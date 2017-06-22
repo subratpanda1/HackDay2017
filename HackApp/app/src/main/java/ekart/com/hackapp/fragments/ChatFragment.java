@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import ai.api.android.AIConfiguration;
 import ai.api.model.AIError;
 import ai.api.model.AIResponse;
 import ai.api.ui.AIButton;
@@ -15,6 +16,7 @@ import ekart.com.hackapp.R;
 import ekart.com.hackapp.adapters.ChatRVAdapter;
 import ekart.com.hackapp.models.ChatModel;
 import ekart.com.hackapp.models.TextChatModel;
+import ekart.com.hackapp.sample.Config;
 
 /**
  * Created by brinder.singh on 22/06/17.
@@ -23,6 +25,7 @@ import ekart.com.hackapp.models.TextChatModel;
 public class ChatFragment extends BaseFragment implements AIButton.AIButtonListener{
     private RecyclerView recyclerViewChat;
     private ChatRVAdapter chatRVAdapter;
+    private AIButton aiButton;
 
     @Nullable
     @Override
@@ -43,11 +46,25 @@ public class ChatFragment extends BaseFragment implements AIButton.AIButtonListe
         recyclerViewChat.setLayoutManager(layoutManager);
         chatRVAdapter = new ChatRVAdapter();
         recyclerViewChat.setAdapter(chatRVAdapter);
+
+        aiButton = (AIButton) getView().findViewById(R.id.micButton);
+
+        final AIConfiguration config = new AIConfiguration(Config.ACCESS_TOKEN,
+                AIConfiguration.SupportedLanguages.English,
+                AIConfiguration.RecognitionEngine.System);
+
+        config.setRecognizerStartSound(getResources().openRawResourceFd(R.raw.test_start));
+        config.setRecognizerStopSound(getResources().openRawResourceFd(R.raw.test_stop));
+        config.setRecognizerCancelSound(getResources().openRawResourceFd(R.raw.test_cancel));
+
+        aiButton.initialize(config);
+        aiButton.setResultsListener(this);
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        aiButton.resume();
         for (int i = 0; i < 800; i++) {
             chatRVAdapter.addChat(new TextChatModel(ChatModel.WHO.USER, "Hidsdasdasdasdasdssadasdasdasdasdas " + i));
             chatRVAdapter.addChat(new TextChatModel(ChatModel.WHO.COMPUTER, "Hellodasdsadasdasdasdasdasdasdasdasdasdasd " + i*2));
@@ -78,4 +95,11 @@ public class ChatFragment extends BaseFragment implements AIButton.AIButtonListe
     public void onCancelled() {
 
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        aiButton.pause();
+    }
+
 }

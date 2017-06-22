@@ -9,22 +9,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import java.util.Map;
-import java.util.Observable;
-
 import ekart.com.hackapp.R;
 import ekart.com.hackapp.adapters.SectionsPagerAdapter;
-import ekart.com.hackapp.fsm.MyFSM;
-import ekart.com.hackapp.fsm.State;
-import ekart.com.hackapp.fsm.events.EventName;
-import ekart.com.hackapp.fsm.events.EventType;
-import ekart.com.hackapp.fsm.events.StateEvent;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 

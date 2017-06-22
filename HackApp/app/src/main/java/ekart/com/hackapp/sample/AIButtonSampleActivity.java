@@ -58,7 +58,7 @@ public class AIButtonSampleActivity extends BaseActivity implements AIButton.AIB
         setContentView(R.layout.activity_aibutton_sample);
 
         resultTextView = (TextView) findViewById(R.id.resultTextView);
-        aiButton = (AIButton) findViewById(R.id.micButton);
+        aiButton = (AIButton) findViewById(R.id.micButton1);
 
         final AIConfiguration config = new AIConfiguration(Config.ACCESS_TOKEN,
                 AIConfiguration.SupportedLanguages.English,
