@@ -1,5 +1,7 @@
 package com.ekart.goliathus.entities;
 
+import lombok.Data;
+
 import javax.persistence.*;
 
 /**
@@ -7,10 +9,15 @@ import javax.persistence.*;
  */
 @Entity
 @Table
+@Data
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
     private String name;
+    private String phone;
+    private String email;
+    @Embedded
+    private Address address;
 }
