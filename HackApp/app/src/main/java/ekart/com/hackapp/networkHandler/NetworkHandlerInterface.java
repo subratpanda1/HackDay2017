@@ -1,5 +1,7 @@
 package ekart.com.hackapp.networkHandler;
 
+import java.util.Map;
+
 import retrofit2.Call;
 import retrofit2.http.GET;
 
@@ -9,5 +11,5 @@ import retrofit2.http.GET;
 
 public interface NetworkHandlerInterface {
     @GET("/healthcheck")
-    Call<Object> listRepos();
+    Call<Map<String, Long>> listRepos();
 }

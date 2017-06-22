@@ -86,7 +86,7 @@ public class SampleActivity extends BaseActivity {
 
     public void textSampleClick(final View view) {
         // startActivity(AITextSampleActivity.class);
-        MyFSM.getInstance().handleEvent(new StateEvent(EventType.DUMMY_TYPE, EventName.DUMMY_EVENT));
+        MyFSM.getInstance().handleEvent(new StateEvent(EventType.DUMMY_TYPE, EventName.DUMMY_NAME));
     }
 
     private void startActivity(Class<?> cls) {

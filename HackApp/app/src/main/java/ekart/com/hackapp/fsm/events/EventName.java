@@ -5,5 +5,5 @@ package ekart.com.hackapp.fsm.events;
  */
 
 public enum EventName {
-    DUMMY_EVENT
+    DUMMY_NAME
 }
