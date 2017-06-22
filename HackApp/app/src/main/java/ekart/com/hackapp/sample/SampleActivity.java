@@ -28,6 +28,10 @@ import android.view.MenuItem;
 import android.view.View;
 
 import ekart.com.hackapp.R;
+import ekart.com.hackapp.fsm.MyFSM;
+import ekart.com.hackapp.fsm.events.EventName;
+import ekart.com.hackapp.fsm.events.EventType;
+import ekart.com.hackapp.fsm.events.StateEvent;
 
 public class SampleActivity extends BaseActivity {
 
@@ -81,7 +85,8 @@ public class SampleActivity extends BaseActivity {
     }
 
     public void textSampleClick(final View view) {
-        startActivity(AITextSampleActivity.class);
+        // startActivity(AITextSampleActivity.class);
+        MyFSM.getInstance().handleEvent(new StateEvent(EventType.DUMMY_TYPE, EventName.DUMMY_EVENT));
     }
 
     private void startActivity(Class<?> cls) {
