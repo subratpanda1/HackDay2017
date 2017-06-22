@@ -14,9 +14,6 @@ import ekart.com.hackapp.R;
 import ekart.com.hackapp.adapters.SectionsPagerAdapter;
 import ekart.com.hackapp.fsm.MyFSM;
 import ekart.com.hackapp.fsm.State;
-import ekart.com.hackapp.fsm.events.EventName;
-import ekart.com.hackapp.fsm.events.EventType;
-import ekart.com.hackapp.fsm.events.StateEvent;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
@@ -68,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 io.reactivex.Observable.create(new ObservableOnSubscribe<State>() {
                     @Override
                     public void subscribe(ObservableEmitter<State> e) throws Exception {
-                        State state = MyFSM.getInstance().handleEvent(new StateEvent(EventType.DUMMY_TYPE, EventName.DUMMY_NAME));
+                        State state = MyFSM.getInstance().handleEvent("SHOW CATEGORIES");
                         e.onNext(state);
                     }
                 }).subscribeOn(Schedulers.computation())

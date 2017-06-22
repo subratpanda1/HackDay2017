@@ -1,5 +1,6 @@
 package ekart.com.hackapp.fsm;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,6 +8,7 @@ import java.util.Map;
 import ekart.com.hackapp.fsm.actions.ActionMap;
 import ekart.com.hackapp.fsm.actions.ActionResponse;
 import ekart.com.hackapp.fsm.actions.ActionType;
+import ekart.com.hackapp.fsm.events.EventName;
 import ekart.com.hackapp.fsm.events.StateEvent;
 
 /**
@@ -27,6 +29,10 @@ public class MyFSM {
     }
 
     private MyFSM() {
+        stateList = new ArrayList<>();
+        currentState = new State();
+        currentState.stateName = StateName.WELCOME;
+        stateList.add(currentState);
     }
 
     public State handleEvent(StateEvent event) {
@@ -45,9 +51,27 @@ public class MyFSM {
                 currentState = new State();
                 currentState.stateName = StateName.CATEGORIES_LISTED;
                 currentState.stateEntity = stateEntity;
+                stateList.add(currentState);
                 break;
         }
 
         return currentState;
+    }
+
+    public State handleEvent(String text) {
+        // Based on the text and current state, the event is formed
+        if ("SHOW CATEGORIES".equals(text)) {
+
+        } else if (text.contains("SELECT ITEM")) {
+            // Based on previous state, choose the appropriate item
+        } else if (text.contains("ADD ITEM")) {
+
+        } else if (text.contains("YES")) {
+
+        } else if (text.contains("NO")) {
+
+        }
+
+        return handleEvent(new StateEvent(EventName.DUMMY_NAME));
     }
 }
