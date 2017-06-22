@@ -53,13 +53,6 @@ public class ChatFragment extends BaseFragment implements AIButton.AIButtonListe
         recyclerViewChat.setLayoutManager(layoutManager);
         chatRVAdapter = new ChatRVAdapter();
         recyclerViewChat.setAdapter(chatRVAdapter);
-        recyclerViewChat.post(new Runnable() {
-            @Override
-            public void run() {
-                // Call smooth scroll
-                recyclerViewChat.smoothScrollToPosition(chatRVAdapter.getItemCount());
-            }
-        });
 
         aiButton = (AIButton) getView().findViewById(R.id.micButton);
 
@@ -101,6 +94,10 @@ public class ChatFragment extends BaseFragment implements AIButton.AIButtonListe
             @Override
             public void subscribe(ObservableEmitter<State> e) throws Exception {
                 chatRVAdapter.addChat(new TextChatModel(ChatModel.WHO.COMPUTER, result.getResult().getResolvedQuery()));
+                if (chatRVAdapter.getItemCount() > 1)
+                {
+                    recyclerViewChat.getLayoutManager().smoothScrollToPosition(recyclerViewChat, null, chatRVAdapter.getItemCount() - 1);
+                }
                 e.onNext(MyFSM.getInstance().handleEvent(result.getResult().getFulfillment().getSpeech()));
             }
         }).subscribeOn(Schedulers.computation())
@@ -114,6 +111,10 @@ public class ChatFragment extends BaseFragment implements AIButton.AIButtonListe
                     public void onNext(State state) {
                         System.out.println("Got state: " + state.stateEntity.data.toString());
                         chatRVAdapter.addChat(new TextChatModel(ChatModel.WHO.COMPUTER, state.stateEntity.data.toString()));
+                        if (chatRVAdapter.getItemCount() > 1)
+                        {
+                            recyclerViewChat.getLayoutManager().smoothScrollToPosition(recyclerViewChat, null, chatRVAdapter.getItemCount() - 1);
+                        }
                     }
 
                     @Override
