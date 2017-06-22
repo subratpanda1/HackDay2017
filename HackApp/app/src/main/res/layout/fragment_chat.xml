@@ -21,20 +21,22 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:paddingTop="10dp"
-            android:paddingBottom="10dp"
+            android:paddingBottom="50dp"
             android:layout_centerHorizontal="true"
             android:layout_alignParentBottom="true"
             android:visibility="visible">
 
         <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"/>
 
         <ai.api.ui.AIButton
-            android:id="@+id/micButton"
-            style="@style/microphoneStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+                android:id="@+id/micButton"
+                style="@style/microphoneStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"/>
     </RelativeLayout>
 
 </RelativeLayout>

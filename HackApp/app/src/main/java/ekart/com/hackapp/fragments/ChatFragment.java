@@ -43,6 +43,13 @@ public class ChatFragment extends BaseFragment implements AIButton.AIButtonListe
         recyclerViewChat.setLayoutManager(layoutManager);
         chatRVAdapter = new ChatRVAdapter();
         recyclerViewChat.setAdapter(chatRVAdapter);
+        recyclerViewChat.post(new Runnable() {
+            @Override
+            public void run() {
+                // Call smooth scroll
+                recyclerViewChat.smoothScrollToPosition(chatRVAdapter.getItemCount());
+            }
+        });
     }
 
     @Override
