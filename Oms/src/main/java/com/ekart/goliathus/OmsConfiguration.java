@@ -1,10 +1,15 @@
 package com.ekart.goliathus;
 
 import io.dropwizard.Configuration;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import org.hibernate.validator.constraints.*;
+import io.dropwizard.db.DataSourceFactory;
+import lombok.Data;
+
+import javax.validation.Valid;
 import javax.validation.constraints.*;
 
+@Data
 public class OmsConfiguration extends Configuration {
-    // TODO: implement service configuration
+    @NotNull
+    @Valid
+    private final DataSourceFactory database = new DataSourceFactory();
 }
