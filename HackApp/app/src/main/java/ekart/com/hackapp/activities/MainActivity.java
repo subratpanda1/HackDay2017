@@ -1,4 +1,4 @@
-package ekart.com.hackapp;
+package ekart.com.hackapp.activities;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -10,7 +10,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+
+import ekart.com.hackapp.R;
+import ekart.com.hackapp.adapters.SectionsPagerAdapter;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -28,9 +30,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
-    public static final int VOICE_RECOGNITION_REQUEST_CODE = 1234;
-    public Button speakButton;
-
 
 
     @Override
