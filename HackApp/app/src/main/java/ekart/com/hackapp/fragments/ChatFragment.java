@@ -8,6 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import ai.api.model.AIError;
+import ai.api.model.AIResponse;
+import ai.api.ui.AIButton;
 import ekart.com.hackapp.R;
 import ekart.com.hackapp.adapters.ChatRVAdapter;
 import ekart.com.hackapp.models.ChatModel;
@@ -17,7 +20,7 @@ import ekart.com.hackapp.models.TextChatModel;
  * Created by brinder.singh on 22/06/17.
  */
 
-public class ChatFragment extends BaseFragment {
+public class ChatFragment extends BaseFragment implements AIButton.AIButtonListener{
     private RecyclerView recyclerViewChat;
     private ChatRVAdapter chatRVAdapter;
 
@@ -59,5 +62,20 @@ public class ChatFragment extends BaseFragment {
         ChatFragment fragment = new ChatFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onResult(AIResponse result) {
+
+    }
+
+    @Override
+    public void onError(AIError error) {
+
+    }
+
+    @Override
+    public void onCancelled() {
+
     }
 }

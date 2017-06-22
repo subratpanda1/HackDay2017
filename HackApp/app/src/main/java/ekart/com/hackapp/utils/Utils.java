@@ -16,9 +16,13 @@ public class Utils {
         params.gravity = gravity;
         if(gravity== Gravity.END){
             params.setMarginStart(100);
+            params.setMarginEnd(10);
         }else {
+            params.setMarginStart(10);
             params.setMarginEnd(100);
         }
+        params.topMargin = 50;
+        params.bottomMargin = 50;
         cardView.setLayoutParams(params);
     }
 
