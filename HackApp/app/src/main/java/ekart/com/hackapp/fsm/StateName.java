@@ -5,6 +5,9 @@ package ekart.com.hackapp.fsm;
  */
 
 public enum StateName {
-    LIST_CATEGORIES,
-    CATEGORIES_LISTED
+    WELCOME,
+    CATEGORIES_LISTED,
+    PRODUCTS_LISTED,
+    PRODUCT_QUANTITY
+
 }
