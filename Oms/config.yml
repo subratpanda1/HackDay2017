@@ -1,4 +1,47 @@
+server:
+  minThreads: 20
+  maxThreads: 500
+  applicationContextPath: /
+  adminContextPath: "/admin"
+  applicationConnectors:
+    - type: http
+      port: 30020
+  adminConnectors:
+    - type: http
+      port: 30021
+
+# Logging settings.
 logging:
+# The default level of all loggers. Can be OFF, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.
   level: INFO
-  loggers:
-    com.ekart.goliathus: DEBUG
+  appenders:
+    - type: file
+      threshold: ALL
+      archive: true
+      logFormat: "%highlight(%-5level) [%date] [%thread] [%cyan(%logger{0})]: %message%n"
+      currentLogFilename: /var/log/hack-2017.log
+      archivedLogFilenamePattern: /var/log/hack2017-%d{yyyy-MM-dd-HH}.log.gz
+      timeZone: IST
+      archivedFileCount: 7
+    - type: console
+      threshold: INFO
+      timeZone: IST
+      logFormat: "%highlight(%-5level) [%date] [%thread] [%cyan(%logger{0})]: %message%n"
+
+
+# Database settings.
+database:
+  # the name of the JDBC driver, mysql in this case
+  driverClass: com.mysql.cj.jdbc.Driver
+  # the username
+  user: root
+  # the password
+  password:
+  # the JDBC URL; the database is called ekl-hawkshaw-digitization
+  url: jdbc:mysql://10.85.41.134/goliathus
+  properties:
+      hibernate.dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+      hibernate.show_sql: true
+      hibernate.id.new_generator_mappings: false
+      hibernate.format_sql : true
+      hibernate.hbm2ddl.auto: update
