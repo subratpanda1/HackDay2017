@@ -5,5 +5,10 @@ package ekart.com.hackapp.fsm.events;
  */
 
 public enum EventName {
-    DUMMY_NAME
+    DUMMY_NAME,
+    SHOW_CATEGORIES,
+    SELECCT_CATEGORY,
+    ADD_PRODUCT,
+    SELECT_QUANTITY,
+    FURTHER
 }
