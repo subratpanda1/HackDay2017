@@ -21,7 +21,7 @@
         android:layout_alignParentBottom="true">
 
         <ai.api.ui.AIButton
-            android:id="@+id/micButton"
+            android:id="@+id/micButton1"
             android:layout_height="152dp"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
