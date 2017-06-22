@@ -16,9 +16,6 @@ import ekart.com.hackapp.R;
 import ekart.com.hackapp.adapters.ChatRVAdapter;
 import ekart.com.hackapp.fsm.MyFSM;
 import ekart.com.hackapp.fsm.State;
-import ekart.com.hackapp.fsm.events.EventName;
-import ekart.com.hackapp.fsm.events.EventType;
-import ekart.com.hackapp.fsm.events.StateEvent;
 import ekart.com.hackapp.models.ChatModel;
 import ekart.com.hackapp.models.TextChatModel;
 import ekart.com.hackapp.sample.Config;
@@ -32,7 +29,7 @@ import io.reactivex.schedulers.Schedulers;
  * Created by brinder.singh on 22/06/17.
  */
 
-public class ChatFragment extends BaseFragment implements AIButton.AIButtonListener{
+public class ChatFragment extends BaseFragment implements AIButton.AIButtonListener {
     private RecyclerView recyclerViewChat;
     private ChatRVAdapter chatRVAdapter;
     private AIButton aiButton;
@@ -77,7 +74,7 @@ public class ChatFragment extends BaseFragment implements AIButton.AIButtonListe
         aiButton.resume();
         for (int i = 0; i < 800; i++) {
             chatRVAdapter.addChat(new TextChatModel(ChatModel.WHO.USER, "Hidsdasdasdasdasdssadasdasdasdasdas " + i));
-            chatRVAdapter.addChat(new TextChatModel(ChatModel.WHO.COMPUTER, "Hellodasdsadasdasdasdasdasdasdasdasdasdasd " + i*2));
+            chatRVAdapter.addChat(new TextChatModel(ChatModel.WHO.COMPUTER, "Hellodasdsadasdasdasdasdasdasdasdasdasdasd " + i * 2));
         }
 //        chatRVAdapter.addChat(new ImageChatModel(ChatModel.WHO.USER, Arrays.asList("Hi")));
 //        chatRVAdapter.addChat(new ImageChatModel(ChatModel.WHO.COMPUTER, Arrays.asList("Hi")));
@@ -97,8 +94,7 @@ public class ChatFragment extends BaseFragment implements AIButton.AIButtonListe
             @Override
             public void subscribe(ObservableEmitter<State> e) throws Exception {
                 chatRVAdapter.addChat(new TextChatModel(ChatModel.WHO.COMPUTER, result.getResult().getResolvedQuery()));
-                MyFSM.getInstance().handleEvent(new StateEvent(EventType.DUMMY_TYPE, EventName.DUMMY_NAME));
-//                e.onNext(state);
+                e.onNext(MyFSM.getInstance().handleEvent(result.getResult().getFulfillment().getSpeech()));
             }
         }).subscribeOn(Schedulers.computation())
                 .subscribe(new Observer<State>() {
@@ -110,7 +106,7 @@ public class ChatFragment extends BaseFragment implements AIButton.AIButtonListe
                     @Override
                     public void onNext(State state) {
                         System.out.println("Got state: " + state.stateEntity.data.toString());
-
+                        chatRVAdapter.addChat(new TextChatModel(ChatModel.WHO.COMPUTER, state.stateEntity.data.toString()));
                     }
 
                     @Override
