@@ -14,9 +14,19 @@ import ai.api.model.AIResponse;
 import ai.api.ui.AIButton;
 import ekart.com.hackapp.R;
 import ekart.com.hackapp.adapters.ChatRVAdapter;
+import ekart.com.hackapp.fsm.MyFSM;
+import ekart.com.hackapp.fsm.State;
+import ekart.com.hackapp.fsm.events.EventName;
+import ekart.com.hackapp.fsm.events.EventType;
+import ekart.com.hackapp.fsm.events.StateEvent;
 import ekart.com.hackapp.models.ChatModel;
 import ekart.com.hackapp.models.TextChatModel;
 import ekart.com.hackapp.sample.Config;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by brinder.singh on 22/06/17.
@@ -82,8 +92,37 @@ public class ChatFragment extends BaseFragment implements AIButton.AIButtonListe
     }
 
     @Override
-    public void onResult(AIResponse result) {
+    public void onResult(final AIResponse result) {
+        io.reactivex.Observable.create(new ObservableOnSubscribe<State>() {
+            @Override
+            public void subscribe(ObservableEmitter<State> e) throws Exception {
+                chatRVAdapter.addChat(new TextChatModel(ChatModel.WHO.COMPUTER, result.getResult().getResolvedQuery()));
+                MyFSM.getInstance().handleEvent(new StateEvent(EventType.DUMMY_TYPE, EventName.DUMMY_NAME));
+//                e.onNext(state);
+            }
+        }).subscribeOn(Schedulers.computation())
+                .subscribe(new Observer<State>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
 
+                    }
+
+                    @Override
+                    public void onNext(State state) {
+                        System.out.println("Got state: " + state.stateEntity.data.toString());
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     @Override

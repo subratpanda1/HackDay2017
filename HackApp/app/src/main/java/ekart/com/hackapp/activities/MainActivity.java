@@ -2,7 +2,6 @@ package ekart.com.hackapp.activities;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +12,16 @@ import android.view.View;
 
 import ekart.com.hackapp.R;
 import ekart.com.hackapp.adapters.SectionsPagerAdapter;
+import ekart.com.hackapp.fsm.MyFSM;
+import ekart.com.hackapp.fsm.State;
+import ekart.com.hackapp.fsm.events.EventName;
+import ekart.com.hackapp.fsm.events.EventType;
+import ekart.com.hackapp.fsm.events.StateEvent;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
