@@ -152,7 +152,15 @@ public class MyFSM {
             currentState.setStateEntity(stateEntity);
             stateList.add(currentState);
             return currentState;
-        } else if ("YES".equals(fulfilledText) || "YES".equals(resolvedText) || resolvedText.contains("YES YES")) {
+        } else if ("YES".equals(fulfilledText) ||
+                "YES".equals(resolvedText) ||
+                resolvedText.contains("YES YES") ||
+                "YEP".equals(fulfilledText) ||
+                "YEP".equals(resolvedText) ||
+                "OK".equals(fulfilledText) ||
+                "OK".equals(resolvedText) ||
+                "OKAY".equals(fulfilledText) ||
+                "OKAY".equals(resolvedText)) {
             StateEvent event = new StateEvent(EventName.CONFIRMATION);
             event.setInputType(inputType);
 
@@ -177,7 +185,7 @@ public class MyFSM {
         } else if ("WHAT IS YOUR NAME".equals(resolvedText)) {
             currentState.getStateEntity().setNextQuestion("My name is shop together");
             return currentState;
-        } else if ("NO".equals(fulfilledText) || "NO".equals(resolvedText) || resolvedText.contains("NO NO")) {
+        } else if (fulfilledText.startsWith("NO") || resolvedText.startsWith("NO") || resolvedText.contains("NO NO")) {
             currentState.getStateEntity().setNextQuestion("Request Cancelled");
             return currentState;
         } else if (fulfilledText.contains("CHECKOUT") || resolvedText.contains("CHECKOUT") || fulfilledText.contains("CHECK OUT") || resolvedText.contains("CHECK OUT")) {
