@@ -10,20 +10,18 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import ekart.com.hackapp.ChatViewModel;
 import ekart.com.hackapp.R;
+import ekart.com.hackapp.models.ItemDetail;
 
 /**
  * Created by brinder.singh on 23/06/17.
  */
 
 public class SwipeFragment extends BaseFragment {
-    public static final String URL = "url";
-    public static final String NAME = "name";
-    public static final String PRICE = "price";
-    private String url;
-    private String name;
-    private String price;
+    public static final String ITEM = "item";
     private LinearLayout linearLayout;
+    private ItemDetail itemDetail;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -36,48 +34,45 @@ public class SwipeFragment extends BaseFragment {
         linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                ChatViewModel.INSTANCE.publishItemDetailSelection(itemDetail);
+                ChatViewModel.INSTANCE.publishCloseDialogPublishSubject(true);
             }
         });
 
         Bundle bundle = getArguments();
-        url = bundle.getString(URL);
-        name = bundle.getString(NAME);
-        price = bundle.getString(PRICE);
+        itemDetail = bundle.getParcelable(ITEM);
 
-        if (url == null) {
+        if (itemDetail.getImageUrl() == null) {
             imageView.setVisibility(View.GONE);
         } else {
             imageView.setVisibility(View.VISIBLE);
             Picasso.with(getActivity())
-                    .load(url)
+                    .load(itemDetail.getImageUrl())
                     .noFade()
                     .into(imageView);
         }
 
-        if (name == null) {
+        if (itemDetail.getName() == null) {
             textView.setVisibility(View.GONE);
         } else {
             textView.setVisibility(View.VISIBLE);
-            textView.setText(name);
+            textView.setText(itemDetail.getName());
         }
 
-        if (price == null) {
+        if (itemDetail.getPrice() == null) {
             textView1.setVisibility(View.GONE);
         } else {
             textView1.setVisibility(View.VISIBLE);
-            textView1.setText(price);
+            textView1.setText(String.valueOf(itemDetail.getPrice()));
         }
 
         return swipeView;
     }
 
-    public static SwipeFragment newInstance(String url, String name, String price) {
+    public static SwipeFragment newInstance(ItemDetail itemDetail) {
         SwipeFragment swipeFragment = new SwipeFragment();
         Bundle bundle = new Bundle();
-        bundle.putString(URL, url);
-        bundle.putString(NAME, name);
-        bundle.putString(PRICE, price);
+        bundle.putParcelable(ITEM, itemDetail);
         swipeFragment.setArguments(bundle);
         return swipeFragment;
     }

@@ -1,5 +1,8 @@
 package ekart.com.hackapp.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -11,7 +14,7 @@ import lombok.Data;
  */
 
 @Data
-public class ItemDetail {
+public class ItemDetail implements Parcelable{
     @SerializedName("id")
     private Long id;
 
@@ -35,6 +38,45 @@ public class ItemDetail {
 
     @SerializedName("brand")
     private String brand;
+
+    public ItemDetail() {
+    }
+
+    protected ItemDetail(Parcel in) {
+        imageUrl = in.readString();
+        name = in.readString();
+        level0Category = in.readString();
+        level1Category = in.readString();
+        tags = in.createStringArrayList();
+        brand = in.readString();
+    }
+
+    public static final Creator<ItemDetail> CREATOR = new Creator<ItemDetail>() {
+        @Override
+        public ItemDetail createFromParcel(Parcel in) {
+            return new ItemDetail(in);
+        }
+
+        @Override
+        public ItemDetail[] newArray(int size) {
+            return new ItemDetail[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(imageUrl);
+        parcel.writeString(name);
+        parcel.writeString(level0Category);
+        parcel.writeString(level1Category);
+        parcel.writeStringList(tags);
+        parcel.writeString(brand);
+    }
 
     public enum ItemType {
         CATEGORY,

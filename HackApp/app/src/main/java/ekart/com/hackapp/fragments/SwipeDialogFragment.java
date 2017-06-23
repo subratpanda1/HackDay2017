@@ -10,9 +10,14 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
+import ekart.com.hackapp.ChatViewModel;
 import ekart.com.hackapp.R;
 import ekart.com.hackapp.adapters.SwipeFragmentPagerAdapter;
 import ekart.com.hackapp.models.ItemDetail;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Consumer;
 import lombok.Setter;
 
 /**
@@ -24,8 +29,9 @@ public class SwipeDialogFragment extends BaseDialogFragment {
     private ViewPager viewPager;
     private SwipeFragmentPagerAdapter swipeFragmentPagerAdapter;
     private List<ItemDetail> itemDetails;
+    private CompositeDisposable compositeDisposable;
 
-    public SwipeDialogFragment(){
+    public SwipeDialogFragment() {
 
     }
 
@@ -45,7 +51,37 @@ public class SwipeDialogFragment extends BaseDialogFragment {
 
     @Override
     public void onCancel(DialogInterface dialog) {
-//        SettingsViewModel.INSTANCE.publishSettingsSaveEvent(false);
         super.onCancel(dialog);
+    }
+
+    void bind() {
+        unbind();
+        compositeDisposable = new CompositeDisposable();
+        compositeDisposable.add(ChatViewModel.INSTANCE.getCloseDialogPublishSubject()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Boolean>() {
+                    @Override
+                    public void accept(@NonNull Boolean aBoolean) throws Exception {
+                        SwipeDialogFragment.this.dismiss();
+                    }
+                }));
+    }
+
+    void unbind() {
+        if (compositeDisposable != null) {
+            compositeDisposable.dispose();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        bind();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        unbind();
     }
 }

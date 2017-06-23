@@ -11,8 +11,13 @@ import lombok.Getter;
 public enum ChatViewModel {
     INSTANCE;
     private final PublishSubject<ItemDetail> itemDetailPublishSubject = PublishSubject.create();
+    private final PublishSubject<Boolean> closeDialogPublishSubject = PublishSubject.create();
 
     public void publishItemDetailSelection(ItemDetail itemDetail) {
         itemDetailPublishSubject.onNext(itemDetail);
+    }
+
+    public void publishCloseDialogPublishSubject(Boolean b) {
+        closeDialogPublishSubject.onNext(b);
     }
 }

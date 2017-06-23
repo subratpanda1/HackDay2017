@@ -34,6 +34,6 @@ public class SwipeFragmentPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
 //        return SwipeFragment.newInstance("http://cdn.grofers.com/app/images/products/normal/pro_318555.jpg", "Detergent", "43");
-        return SwipeFragment.newInstance(itemDetails.get(position).getImageUrl(), itemDetails.get(position).getName(), String.valueOf(itemDetails.get(position).getPrice()));
+        return SwipeFragment.newInstance(itemDetails.get(position));
     }
 }

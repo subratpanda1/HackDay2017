@@ -102,10 +102,11 @@ public class ChatFragment extends BaseFragment implements AIButton.AIButtonListe
             @Override
             public void subscribe(ObservableEmitter<State> e) throws Exception {
                 chatRVAdapter.addChat(new TextChatModel(ChatModel.WHO.USER, result.getResult().getResolvedQuery()));
+                chatRVAdapter.addChat(new TextChatModel(ChatModel.WHO.COMPUTER, "Processed: " + result.getResult().getFulfillment().getSpeech()));
                 if (chatRVAdapter.getItemCount() > 1) {
                     recyclerViewChat.getLayoutManager().smoothScrollToPosition(recyclerViewChat, null, chatRVAdapter.getItemCount() - 1);
                 }
-                e.onNext(MyFSM.getInstance().handleEvent(result.getResult().getResolvedQuery().toUpperCase(), InputType.VOICE));
+                e.onNext(MyFSM.getInstance().handleEvent(result.getResult().getFulfillment().getSpeech().toUpperCase(), InputType.VOICE));
             }
         }).subscribeOn(Schedulers.computation())
                 .subscribe(new Observer<State>() {
@@ -145,11 +146,11 @@ public class ChatFragment extends BaseFragment implements AIButton.AIButtonListe
     }
 
     String nextQuestion;
-    private void handleCommand(final String command) {
+    private void handleCommand(final String command, final InputType inputType) {
         io.reactivex.Observable.create(new ObservableOnSubscribe<State>() {
             @Override
             public void subscribe(ObservableEmitter<State> e) throws Exception {
-                e.onNext(MyFSM.getInstance().handleEvent(command, InputType.VOICE));
+                e.onNext(MyFSM.getInstance().handleEvent(command, inputType));
             }
         }).subscribeOn(Schedulers.computation())
                 .subscribe(new Observer<State>() {
@@ -210,9 +211,16 @@ public class ChatFragment extends BaseFragment implements AIButton.AIButtonListe
                 .subscribe(new Consumer<ItemDetail>() {
                     @Override
                     public void accept(@NonNull ItemDetail itemDetail) throws Exception {
-                        handleCommand("SHOW PRODUCTS " + itemDetail.getName());
-                        chatRVAdapter.addChat(new TextChatModel(ChatModel.WHO.COMPUTER, "Item selected"));
-                        chatRVAdapter.addChat(new ImageChatModel(ChatModel.WHO.COMPUTER, itemDetail.getImageUrl()));
+                        if(itemDetail.getItemType()== ItemDetail.ItemType.CATEGORY) {
+                            handleCommand("SHOW PRODUCTS " + itemDetail.getName(), InputType.CLICK);
+                        }
+                        if(itemDetail.getItemType()== ItemDetail.ItemType.PRODUCT) {
+                            handleCommand("ADD PRODUCT " + itemDetail.getName(), InputType.CLICK);
+                            chatRVAdapter.addChat(new TextChatModel(ChatModel.WHO.COMPUTER, "Item added"));
+                            TTS.speak("Item added");
+                            chatRVAdapter.addChat(new ImageChatModel(ChatModel.WHO.COMPUTER, itemDetail.getImageUrl()));
+                            adjustRV();
+                        }
                     }
                 }));
     }

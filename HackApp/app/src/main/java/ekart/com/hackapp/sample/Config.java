@@ -23,7 +23,7 @@ package ekart.com.hackapp.sample;
 
 public abstract class Config {
     // copy this keys from your developer dashboard
-    public static final String ACCESS_TOKEN = "756a928c4fcf4f3497299990f19edc8a";
+    public static final String ACCESS_TOKEN = "6ca7686aeb64470ea1b1a6cac72d042b";
 
     public static final LanguageConfig[] languages = new LanguageConfig[]{
             new LanguageConfig("en", "a11ea1d839e3446d84e402cb97cdadfb"),
