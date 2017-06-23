@@ -27,4 +27,7 @@ public interface NetworkHandlerInterface {
     @POST("goliathus/product/{product}/add/{inputType}")
     Call<AddProductResponse> addProduct(@Path("product") String product, @Path("inputType") String inputType);
 
+    @GET("goliathus/search/{inputType}/{productName}")
+    Call<List<ItemDetail>> searchProduct(@Path("inputType") String inputType, @Path("productName") String productName);
+
 }

@@ -8,7 +8,8 @@ public enum ActionType {
     DUMMY_ACTION,
     SHOW_CATEGORIES,
     SHOW_ITEMS,
-    ADD_ITEM,
+    SELECT_ITEM,
+    ADD_PRODUCT,
     CONFIRMATION,
     REJECTION
 }

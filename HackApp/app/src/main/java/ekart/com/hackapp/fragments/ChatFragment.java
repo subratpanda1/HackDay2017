@@ -14,6 +14,7 @@ import ai.api.model.AIResponse;
 import ai.api.ui.AIButton;
 import ekart.com.hackapp.R;
 import ekart.com.hackapp.adapters.ChatRVAdapter;
+import ekart.com.hackapp.fsm.InputType;
 import ekart.com.hackapp.fsm.MyFSM;
 import ekart.com.hackapp.fsm.State;
 import ekart.com.hackapp.models.ChatModel;
@@ -92,7 +93,7 @@ public class ChatFragment extends BaseFragment implements AIButton.AIButtonListe
                 {
                     recyclerViewChat.getLayoutManager().smoothScrollToPosition(recyclerViewChat, null, chatRVAdapter.getItemCount() - 1);
                 }
-                e.onNext(MyFSM.getInstance().handleEvent("SHOW CATEGORIES"));
+                e.onNext(MyFSM.getInstance().handleEvent("ADD Kelloggs", InputType.VOICE));
             }
         }).subscribeOn(Schedulers.computation())
                 .subscribe(new Observer<State>() {
@@ -103,8 +104,8 @@ public class ChatFragment extends BaseFragment implements AIButton.AIButtonListe
 
                     @Override
                     public void onNext(State state) {
-                        System.out.println("Got state: " + state.stateEntity.data.toString());
-                        chatRVAdapter.addChat(new TextChatModel(ChatModel.WHO.COMPUTER, state.stateEntity.data.toString()));
+                        System.out.println("Got state: " + state.getStateEntity().getData().toString());
+                        chatRVAdapter.addChat(new TextChatModel(ChatModel.WHO.COMPUTER, state.getStateEntity().getData().toString()));
                         FragmentUtils.showCustomDialog(new SwipeDialogFragment(), getChildFragmentManager());
                         if (chatRVAdapter.getItemCount() > 1)
                         {

@@ -21,6 +21,8 @@ public class ActionMap {
         actionMap = new HashMap<>();
         actionMap.put(ActionType.DUMMY_ACTION, new DummyAction());
         actionMap.put(ActionType.SHOW_CATEGORIES, new ShowCategoriesAction());
+        actionMap.put(ActionType.CONFIRMATION, new ConfirmationAction());
+        actionMap.put(ActionType.ADD_PRODUCT, new AddProductAction());
         // actionMap.put(ActionType.SHOW_ITEMS, new ShowItemsAction());
     }
 }

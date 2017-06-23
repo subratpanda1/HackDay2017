@@ -8,7 +8,10 @@ public enum DataType {
     DUMMY_DATA_TYPE,
     CATEGORY_LIST, // List<String>
     ITEM_NAME, // String
-    ADD_ITEM
+    PRODUCT_NAME, // String
+    ADD_ITEM,
+    ADD_PRODUCT, // AddProductResponse
+    PRODUCT_LIST // List<ItemDetail>
 
 
 }
