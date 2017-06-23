@@ -7,8 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +29,9 @@ public class SlotDialogFragment extends BaseDialogFragment {
     private Spinner slotSpinner;
     private TextView textView;
     private String selectedKey;
+    private Button buttonSelect;
+    private Button buttonCancel;
+    private String slotSelected = "none";
 
     @Nullable
     @Override
@@ -40,6 +45,9 @@ public class SlotDialogFragment extends BaseDialogFragment {
         localitySpinner = (Spinner) getView().findViewById(R.id.localitySpinner);
         slotSpinner = (Spinner) getView().findViewById(R.id.slotSpinner);
         textView = (TextView) getView().findViewById(R.id.discountMessage);
+        buttonCancel = (Button) getView().findViewById(R.id.cancelBtn);
+        buttonSelect = (Button) getView().findViewById(R.id.SelectBtn);
+
         final List<String> localitiesList = new ArrayList<String>(AppInfoProvider.INSTANCE.getDiscountMap().keySet());
         ArrayAdapter<String> ladapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, localitiesList);
         localitySpinner.setAdapter(ladapter);
@@ -65,11 +73,27 @@ public class SlotDialogFragment extends BaseDialogFragment {
                 double discount = AppInfoProvider.INSTANCE.getDiscountMap().get(selectedKey).get(i).getDiscount();
                 textView.setText("Total order from your locality till now is Rs." + amount
                         + ". Please order in this slot to get " + discount + "% discount");
+                slotSelected = AppInfoProvider.INSTANCE.getDiscountMap().get(selectedKey).get(i).toString();
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
 
+            }
+        });
+
+        buttonSelect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getActivity(), "Slot " + slotSelected + " is selected. Happy Shopping!!!", Toast.LENGTH_SHORT).show();
+                SlotDialogFragment.this.dismiss();
+            }
+        });
+
+        buttonCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SlotDialogFragment.this.dismiss();
             }
         });
 
