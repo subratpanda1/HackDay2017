@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
@@ -17,14 +16,8 @@ import android.view.View;
 
 import ekart.com.hackapp.R;
 import ekart.com.hackapp.adapters.SectionsPagerAdapter;
-import ekart.com.hackapp.fsm.MyFSM;
-import ekart.com.hackapp.fsm.State;
 import ekart.com.hackapp.sample.AIButtonSampleActivity;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
+import ekart.com.hackapp.sample.TTS;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -48,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onStart() {
         super.onStart();
         checkAudioRecordPermission();
+        TTS.init(getApplicationContext());
     }
 
     @Override

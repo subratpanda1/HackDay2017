@@ -1,9 +1,7 @@
 package ekart.com.hackapp.fsm;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import ekart.com.hackapp.fsm.actions.ActionMap;
 import ekart.com.hackapp.fsm.actions.ActionResponse;
@@ -12,6 +10,7 @@ import ekart.com.hackapp.fsm.actions.ActionType;
 import ekart.com.hackapp.fsm.events.EventName;
 import ekart.com.hackapp.fsm.events.StateEvent;
 import ekart.com.hackapp.models.AddProductResponse;
+import ekart.com.hackapp.models.Category;
 import ekart.com.hackapp.models.ItemDetail;
 
 /**
@@ -38,19 +37,22 @@ public class MyFSM {
         stateList.add(currentState);
     }
 
-    public State handleEvent(String text, InputType inputType) throws Exception {
+    public State handleEvent(String fulfilledText, String resolvedText, InputType inputType) throws Exception {
         // Based on the text and current state, the event is formed
-        if ("SHOW CATEGORIES".equals(text)) {
+        if ("SHOW CATEGORIES".equals(fulfilledText)) {
             StateEvent event = new StateEvent(EventName.SHOW_CATEGORIES);
             ActionResponse response = ActionMap.getInstance().actionMap.get(ActionType.SHOW_CATEGORIES).execute(event, currentState, stateList);
 
             if (response.getType() == ActionResponseType.CATEGORY_LIST) {
-                List<String> responseStrList = (List<String>) (response.actionResponse);
+                List<Category> responseStrList = (List<Category>) (response.actionResponse);
 
                 List<ItemDetail> itemList = new ArrayList<>();
-                for (String str : responseStrList) {
+                for (Category cat : responseStrList) {
                     ItemDetail itemDetail = new ItemDetail();
-                    itemDetail.setName(str);
+                    itemDetail.setName(cat.getName());
+                    itemDetail.setImageUrl(cat.getImageUrl());
+                    itemDetail.setItemType(ItemDetail.ItemType.CATEGORY);
+                    itemList.add(itemDetail);
                 }
 
                 StateEntity stateEntity = new StateEntity();
@@ -63,25 +65,39 @@ public class MyFSM {
                 stateList.add(currentState);
                 return currentState;
             }
-        } else if (text.contains("SELECT ITEM")) {
-            // Based on previous state, choose the appropriate item
-            StateEvent event = new StateEvent(EventName.SELECT_ITEM);
-            event.setDataType(DataType.ITEM_NAME);
-            event.setEventData(text.replace("SELECT ITEM", ""));
-        } else if (text.contains("ADD ")) {
+        } else if (fulfilledText.startsWith("SHOW PRODUCTS")) {
+            StateEvent event = new StateEvent(EventName.SHOW_PRODUCTS);
+            event.setInputType(inputType);
+            event.setDataType(DataType.CATEGORY_NAME);
+            event.setEventData(fulfilledText.replace("SHOW PRODUCTS ", ""));
+
+            ActionResponse response = ActionMap.getInstance().actionMap.get(ActionType.SHOW_PRODUCTS).execute(event, currentState, stateList);
+
+            if (response.getType() == ActionResponseType.PRODUCT_LIST) {
+                StateEntity stateEntity = new StateEntity();
+                stateEntity.setDataType(DataType.PRODUCT_NAME);
+                stateEntity.setData(response.actionResponse);
+                stateEntity.setNextQuestion("Which product do you want to add ?");
+
+                currentState = new State();
+                currentState.setStateName(StateName.PRODUCTS_LISTED);
+                currentState.setStateEntity(stateEntity);
+                stateList.add(currentState);
+                return currentState;
+            }
+        } else if (fulfilledText.startsWith("ADD ")) {
             StateEvent event = new StateEvent(EventName.ADD_PRODUCT);
             event.setInputType(inputType);
             event.setDataType(DataType.PRODUCT_NAME);
-            event.setEventData(text.replace("ADD ", ""));
+            event.setEventData(fulfilledText.replace("ADD ", ""));
 
             ActionResponse response = ActionMap.getInstance().actionMap.get(ActionType.ADD_PRODUCT).execute(event, currentState, stateList);
 
             if (response.getType() == ActionResponseType.ADD_PRODUCT) {
-
                 StateEntity stateEntity = new StateEntity();
                 stateEntity.setDataType(DataType.PRODUCT_LIST);
-                stateEntity.setData(response);
-                stateEntity.setNextQuestion("Are you sure");
+                stateEntity.setData(response.actionResponse);
+                stateEntity.setNextQuestion("Are you sure ?");
 
                 currentState = new State();
                 currentState.setStateName(StateName.PRODUCTS_LISTED);
@@ -90,7 +106,7 @@ public class MyFSM {
                 return currentState;
             }
 
-        } else if ("YES".equals(text)) {
+        } else if ("YES".equals(fulfilledText)) {
             StateEvent event = new StateEvent(EventName.CONFIRMATION);
             event.setInputType(inputType);
 
@@ -111,12 +127,30 @@ public class MyFSM {
                 return currentState;
             }
 
-        } else if ("NO".equals(text)) {
+        } else if ("NO".equals(fulfilledText)) {
 
-        } else if (text.contains("MORE")) {
+        } else if (fulfilledText.contains("MORE")) {
 
         } else {
+            StateEvent event = new StateEvent(EventName.ADD_PRODUCT);
+            event.setInputType(inputType);
+            event.setDataType(DataType.PRODUCT_NAME);
+            event.setEventData(resolvedText);
 
+            ActionResponse response = ActionMap.getInstance().actionMap.get(ActionType.ADD_PRODUCT).execute(event, currentState, stateList);
+
+            if (response.getType() == ActionResponseType.ADD_PRODUCT) {
+                StateEntity stateEntity = new StateEntity();
+                stateEntity.setDataType(DataType.PRODUCT_LIST);
+                stateEntity.setData(response.actionResponse);
+                stateEntity.setNextQuestion("Are you sure ?");
+
+                currentState = new State();
+                currentState.setStateName(StateName.PRODUCTS_LISTED);
+                currentState.setStateEntity(stateEntity);
+                stateList.add(currentState);
+                return currentState;
+            }
         }
 
         return null;
