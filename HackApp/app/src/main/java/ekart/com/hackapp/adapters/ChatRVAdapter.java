@@ -1,5 +1,6 @@
 package ekart.com.hackapp.adapters;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,11 @@ import ekart.com.hackapp.models.ChatModel;
 
 public class ChatRVAdapter extends RecyclerView.Adapter<BaseChatViewHolder> {
     private List<ChatModel> chatModels = new ArrayList<>();
+    private Context context;
+
+    public ChatRVAdapter(Context context) {
+        this.context = context;
+    }
 
     @Override
     public BaseChatViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -29,7 +35,7 @@ public class ChatRVAdapter extends RecyclerView.Adapter<BaseChatViewHolder> {
         switch (viewType) {
             case ChatModel.IMAGE_LIST:
                 View v1 = inflater.inflate(R.layout.image_chat_holder, parent, false);
-                viewHolder = new ImageChatHolder(v1);
+                viewHolder = new ImageChatHolder(context, v1);
                 break;
             case ChatModel.TYPE_TEXT:
                 View v2 = inflater.inflate(R.layout.text_chat_holder, parent, false);

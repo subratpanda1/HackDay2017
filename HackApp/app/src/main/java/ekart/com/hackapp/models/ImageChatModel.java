@@ -1,7 +1,5 @@
 package ekart.com.hackapp.models;
 
-import java.util.List;
-
 import lombok.Data;
 
 /**
@@ -9,10 +7,10 @@ import lombok.Data;
  */
 @Data
 public class ImageChatModel extends ChatModel {
-    private List<String> urls;
+    private String url;
 
-    public ImageChatModel(WHO who, List<String> urls) {
+    public ImageChatModel(WHO who, String url) {
         super(who, IMAGE_LIST);
-        this.urls = urls;
+        this.url = url;
     }
 }

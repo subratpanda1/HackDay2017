@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -22,6 +23,7 @@ public class SwipeFragment extends BaseFragment {
     private String url;
     private String name;
     private String price;
+    private LinearLayout linearLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -30,6 +32,13 @@ public class SwipeFragment extends BaseFragment {
         ImageView imageView = (ImageView) swipeView.findViewById(R.id.imageViewChatItem);
         TextView textView = (TextView) swipeView.findViewById(R.id.textViewChatItem);
         TextView textView1 = (TextView) swipeView.findViewById(R.id.textViewChatItem1);
+        LinearLayout linearLayout = (LinearLayout) swipeView.findViewById(R.id.llChatViewItem1);
+        linearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
 
         Bundle bundle = getArguments();
         url = bundle.getString(URL);
