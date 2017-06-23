@@ -37,9 +37,9 @@ public class MyFSM {
         stateList.add(currentState);
     }
 
-    public State handleEvent(String text, InputType inputType) throws Exception {
+    public State handleEvent(String fulfilledText, String resolvedText, InputType inputType) throws Exception {
         // Based on the text and current state, the event is formed
-        if ("SHOW CATEGORIES".equals(text)) {
+        if ("SHOW CATEGORIES".equals(fulfilledText)) {
             StateEvent event = new StateEvent(EventName.SHOW_CATEGORIES);
             ActionResponse response = ActionMap.getInstance().actionMap.get(ActionType.SHOW_CATEGORIES).execute(event, currentState, stateList);
 
@@ -65,11 +65,11 @@ public class MyFSM {
                 stateList.add(currentState);
                 return currentState;
             }
-        } else if (text.startsWith("SHOW PRODUCTS")) {
+        } else if (fulfilledText.startsWith("SHOW PRODUCTS")) {
             StateEvent event = new StateEvent(EventName.SHOW_PRODUCTS);
             event.setInputType(inputType);
             event.setDataType(DataType.CATEGORY_NAME);
-            event.setEventData(text.replace("SHOW PRODUCTS ", ""));
+            event.setEventData(fulfilledText.replace("SHOW PRODUCTS ", ""));
 
             ActionResponse response = ActionMap.getInstance().actionMap.get(ActionType.SHOW_PRODUCTS).execute(event, currentState, stateList);
 
@@ -85,11 +85,11 @@ public class MyFSM {
                 stateList.add(currentState);
                 return currentState;
             }
-        } else if (text.startsWith("ADD ")) {
+        } else if (fulfilledText.startsWith("ADD ")) {
             StateEvent event = new StateEvent(EventName.ADD_PRODUCT);
             event.setInputType(inputType);
             event.setDataType(DataType.PRODUCT_NAME);
-            event.setEventData(text.replace("ADD ", ""));
+            event.setEventData(fulfilledText.replace("ADD ", ""));
 
             ActionResponse response = ActionMap.getInstance().actionMap.get(ActionType.ADD_PRODUCT).execute(event, currentState, stateList);
 
@@ -106,7 +106,7 @@ public class MyFSM {
                 return currentState;
             }
 
-        } else if ("YES".equals(text)) {
+        } else if ("YES".equals(fulfilledText)) {
             StateEvent event = new StateEvent(EventName.CONFIRMATION);
             event.setInputType(inputType);
 
@@ -127,12 +127,30 @@ public class MyFSM {
                 return currentState;
             }
 
-        } else if ("NO".equals(text)) {
+        } else if ("NO".equals(fulfilledText)) {
 
-        } else if (text.contains("MORE")) {
+        } else if (fulfilledText.contains("MORE")) {
 
         } else {
+            StateEvent event = new StateEvent(EventName.ADD_PRODUCT);
+            event.setInputType(inputType);
+            event.setDataType(DataType.PRODUCT_NAME);
+            event.setEventData(resolvedText);
 
+            ActionResponse response = ActionMap.getInstance().actionMap.get(ActionType.ADD_PRODUCT).execute(event, currentState, stateList);
+
+            if (response.getType() == ActionResponseType.ADD_PRODUCT) {
+                StateEntity stateEntity = new StateEntity();
+                stateEntity.setDataType(DataType.PRODUCT_LIST);
+                stateEntity.setData(response.actionResponse);
+                stateEntity.setNextQuestion("Are you sure ?");
+
+                currentState = new State();
+                currentState.setStateName(StateName.PRODUCTS_LISTED);
+                currentState.setStateEntity(stateEntity);
+                stateList.add(currentState);
+                return currentState;
+            }
         }
 
         return null;

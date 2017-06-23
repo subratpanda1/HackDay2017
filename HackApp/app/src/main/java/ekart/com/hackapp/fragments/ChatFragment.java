@@ -106,7 +106,7 @@ public class ChatFragment extends BaseFragment implements AIButton.AIButtonListe
                 if (chatRVAdapter.getItemCount() > 1) {
                     recyclerViewChat.getLayoutManager().smoothScrollToPosition(recyclerViewChat, null, chatRVAdapter.getItemCount() - 1);
                 }
-                e.onNext(MyFSM.getInstance().handleEvent(result.getResult().getFulfillment().getSpeech().toUpperCase(), InputType.VOICE));
+                e.onNext(MyFSM.getInstance().handleEvent(result.getResult().getFulfillment().getSpeech().toUpperCase(), result.getResult().getResolvedQuery().toUpperCase(), InputType.VOICE));
             }
         }).subscribeOn(Schedulers.computation())
                 .subscribe(new Observer<State>() {
@@ -150,7 +150,7 @@ public class ChatFragment extends BaseFragment implements AIButton.AIButtonListe
         io.reactivex.Observable.create(new ObservableOnSubscribe<State>() {
             @Override
             public void subscribe(ObservableEmitter<State> e) throws Exception {
-                e.onNext(MyFSM.getInstance().handleEvent(command, inputType));
+                e.onNext(MyFSM.getInstance().handleEvent(command, "", inputType));
             }
         }).subscribeOn(Schedulers.computation())
                 .subscribe(new Observer<State>() {
