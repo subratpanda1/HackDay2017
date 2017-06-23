@@ -7,9 +7,12 @@ import java.util.Map;
 
 import ekart.com.hackapp.fsm.actions.ActionMap;
 import ekart.com.hackapp.fsm.actions.ActionResponse;
+import ekart.com.hackapp.fsm.actions.ActionResponseType;
 import ekart.com.hackapp.fsm.actions.ActionType;
 import ekart.com.hackapp.fsm.events.EventName;
 import ekart.com.hackapp.fsm.events.StateEvent;
+import ekart.com.hackapp.models.AddProductResponse;
+import ekart.com.hackapp.models.ItemDetail;
 
 /**
  * Created by subrat.panda on 23/06/17.
@@ -31,59 +34,82 @@ public class MyFSM {
     private MyFSM() {
         stateList = new ArrayList<>();
         currentState = new State();
-        currentState.stateName = StateName.WELCOME;
+        currentState.setStateName(StateName.WELCOME);
         stateList.add(currentState);
     }
 
-    public State handleEvent(StateEvent event) {
-        switch (event.eventName) {
-            case DUMMY_NAME: {
-                // Validate Current State
-
-                // Transition to new state
-                // Trigger the action corresponding to the event
-                ActionResponse response = ActionMap.getInstance().actionMap.get(ActionType.DUMMY_ACTION).execute(event, currentState, stateList);
-
-                StateEntity stateEntity = new StateEntity();
-                stateEntity.dataType = DataType.DUMMY_DATA_TYPE;
-                stateEntity.data = response;
-
-                currentState = new State();
-                currentState.stateName = StateName.CATEGORIES_LISTED;
-                currentState.stateEntity = stateEntity;
-                stateList.add(currentState);
-                break;
-            }
-            case SHOW_CATEGORIES: {
-                ActionResponse response = ActionMap.getInstance().actionMap.get(ActionType.SHOW_CATEGORIES).execute(event, currentState, stateList);
-
-                StateEntity stateEntity = new StateEntity();
-                stateEntity.dataType = DataType.CATEGORY_LIST;
-                stateEntity.data = response;
-
-                currentState = new State();
-                currentState.stateName = StateName.CATEGORIES_LISTED;
-                currentState.stateEntity = stateEntity;
-                stateList.add(currentState);
-                break;
-            }
-        }
-
-        return currentState;
-    }
-
-    public State handleEvent(String text) throws Exception {
+    public State handleEvent(String text, InputType inputType) throws Exception {
         // Based on the text and current state, the event is formed
         if ("SHOW CATEGORIES".equals(text)) {
-            return handleEvent(new StateEvent(EventName.SHOW_CATEGORIES));
+            StateEvent event = new StateEvent(EventName.SHOW_CATEGORIES);
+            ActionResponse response = ActionMap.getInstance().actionMap.get(ActionType.SHOW_CATEGORIES).execute(event, currentState, stateList);
+
+            if (response.getType() == ActionResponseType.CATEGORY_LIST) {
+                List<String> responseStrList = (List<String>) (response.actionResponse);
+
+                List<ItemDetail> itemList = new ArrayList<>();
+                for (String str : responseStrList) {
+                    ItemDetail itemDetail = new ItemDetail();
+                    itemDetail.setName(str);
+                }
+
+                StateEntity stateEntity = new StateEntity();
+                stateEntity.setDataType(DataType.PRODUCT_LIST);
+                stateEntity.setData(itemList);
+
+                currentState = new State();
+                currentState.setStateName(StateName.CATEGORIES_LISTED);
+                currentState.setStateEntity(stateEntity);
+                stateList.add(currentState);
+                return currentState;
+            }
         } else if (text.contains("SELECT ITEM")) {
             // Based on previous state, choose the appropriate item
             StateEvent event = new StateEvent(EventName.SELECT_ITEM);
-            event.dataType = DataType.ITEM_NAME;
-            event.eventData = text.replace("SELECT ITEM", "");
-        } else if (text.contains("ADD ITEM")) {
+            event.setDataType(DataType.ITEM_NAME);
+            event.setEventData(text.replace("SELECT ITEM", ""));
+        } else if (text.contains("ADD ")) {
+            StateEvent event = new StateEvent(EventName.ADD_PRODUCT);
+            event.setInputType(inputType);
+            event.setDataType(DataType.PRODUCT_NAME);
+            event.setEventData(text.replace("ADD ", ""));
+
+            ActionResponse response = ActionMap.getInstance().actionMap.get(ActionType.ADD_PRODUCT).execute(event, currentState, stateList);
+
+            if (response.getType() == ActionResponseType.ADD_PRODUCT) {
+
+                StateEntity stateEntity = new StateEntity();
+                stateEntity.setDataType(DataType.PRODUCT_LIST);
+                stateEntity.setData(response);
+                stateEntity.setNextQuestion("Are you sure");
+
+                currentState = new State();
+                currentState.setStateName(StateName.PRODUCTS_LISTED);
+                currentState.setStateEntity(stateEntity);
+                stateList.add(currentState);
+                return currentState;
+            }
 
         } else if ("YES".equals(text)) {
+            StateEvent event = new StateEvent(EventName.CONFIRMATION);
+            event.setInputType(inputType);
+
+            ActionResponse response = ActionMap.getInstance().actionMap.get(ActionType.CONFIRMATION).execute(event, currentState, stateList);
+
+            if (response.getType() == ActionResponseType.ADD_PRODUCT) {
+                AddProductResponse response1 = (AddProductResponse) response.getActionResponse();
+
+                StateEntity stateEntity = new StateEntity();
+                stateEntity.setDataType(DataType.ADD_PRODUCT);
+                stateEntity.setData(response1);
+                stateEntity.setNextQuestion("Successfully added product to order");
+
+                currentState = new State();
+                currentState.setStateName(StateName.FURTHER);
+                currentState.setStateEntity(stateEntity);
+                stateList.add(currentState);
+                return currentState;
+            }
 
         } else if ("NO".equals(text)) {
 
@@ -93,6 +119,6 @@ public class MyFSM {
 
         }
 
-        return handleEvent(new StateEvent(EventName.DUMMY_NAME));
+        return null;
     }
 }

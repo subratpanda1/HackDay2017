@@ -21,9 +21,9 @@ public class SelectItemAction implements Action {
         // Find out the last listing state
         State tmpState = stateList.get(stateList.size() - 1);
 
-        if (tmpState.stateName == StateName.CATEGORIES_LISTED) {
+        if (tmpState.getStateName() == StateName.CATEGORIES_LISTED) {
             // TODO: User can select a number. Need to convert number to the category in the list
-            List<ItemDetail> itemDetails = NetworkHandler.getInstance().getItems(event.eventData.toString());
+            List<ItemDetail> itemDetails = NetworkHandler.getInstance().getItems(event.getEventData().toString());
             ActionResponse actionResponse = new ActionResponse();
             actionResponse.setActionResponse(itemDetails);
             actionResponse.setType(ActionResponseType.ITEM_LIST);

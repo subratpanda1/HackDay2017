@@ -1,10 +1,13 @@
 package ekart.com.hackapp.fsm;
 
+import lombok.Data;
+
 /**
  * Created by subrat.panda on 23/06/17.
  */
 
+@Data
 public class State {
-    public StateName stateName;
-    public StateEntity stateEntity;
+    private StateName stateName;
+    private StateEntity stateEntity;
 }
