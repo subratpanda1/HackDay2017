@@ -1,6 +1,6 @@
 package ekart.com.hackapp.fsm.events;
 
-import java.util.Map;
+import ekart.com.hackapp.fsm.DataType;
 
 /**
  * Created by subrat.panda on 23/06/17.
@@ -8,7 +8,8 @@ import java.util.Map;
 
 public class StateEvent {
     public EventName eventName;
-    public Map<String, Object> eventData;
+    public DataType dataType;
+    public Object eventData;
 
     public StateEvent(EventName eventName) {
         this.eventName = eventName;

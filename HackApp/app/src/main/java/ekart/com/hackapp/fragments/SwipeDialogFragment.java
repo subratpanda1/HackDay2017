@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -36,7 +35,7 @@ public class SwipeDialogFragment extends BaseDialogFragment {
 
     @Override
     public void onCancel(DialogInterface dialog) {
-        SettingsViewModel.INSTANCE.publishSettingsSaveEvent(false);
+//        SettingsViewModel.INSTANCE.publishSettingsSaveEvent(false);
         super.onCancel(dialog);
     }
 }

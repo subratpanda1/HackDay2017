@@ -73,13 +73,6 @@ public class ChatFragment extends BaseFragment implements AIButton.AIButtonListe
     public void onResume() {
         super.onResume();
         aiButton.resume();
-        for (int i = 0; i < 800; i++) {
-            chatRVAdapter.addChat(new TextChatModel(ChatModel.WHO.USER, "Hidsdasdasdasdasdssadasdasdasdasdas " + i));
-            chatRVAdapter.addChat(new TextChatModel(ChatModel.WHO.COMPUTER, "Hellodasdsadasdasdasdasdasdasdasdasdasdasd " + i * 2));
-        }
-//        chatRVAdapter.addChat(new ImageChatModel(ChatModel.WHO.USER, Arrays.asList("Hi")));
-//        chatRVAdapter.addChat(new ImageChatModel(ChatModel.WHO.COMPUTER, Arrays.asList("Hi")));
-
     }
 
     public static ChatFragment newInstance() {
@@ -95,7 +88,11 @@ public class ChatFragment extends BaseFragment implements AIButton.AIButtonListe
             @Override
             public void subscribe(ObservableEmitter<State> e) throws Exception {
                 chatRVAdapter.addChat(new TextChatModel(ChatModel.WHO.COMPUTER, result.getResult().getResolvedQuery()));
-                e.onNext(MyFSM.getInstance().handleEvent(result.getResult().getFulfillment().getSpeech()));
+                if (chatRVAdapter.getItemCount() > 1)
+                {
+                    recyclerViewChat.getLayoutManager().smoothScrollToPosition(recyclerViewChat, null, chatRVAdapter.getItemCount() - 1);
+                }
+                e.onNext(MyFSM.getInstance().handleEvent("SHOW CATEGORIES"));
             }
         }).subscribeOn(Schedulers.computation())
                 .subscribe(new Observer<State>() {
@@ -109,11 +106,15 @@ public class ChatFragment extends BaseFragment implements AIButton.AIButtonListe
                         System.out.println("Got state: " + state.stateEntity.data.toString());
                         chatRVAdapter.addChat(new TextChatModel(ChatModel.WHO.COMPUTER, state.stateEntity.data.toString()));
                         FragmentUtils.showCustomDialog(new SwipeDialogFragment(), getChildFragmentManager());
+                        if (chatRVAdapter.getItemCount() > 1)
+                        {
+                            recyclerViewChat.getLayoutManager().smoothScrollToPosition(recyclerViewChat, null, chatRVAdapter.getItemCount() - 1);
+                        }
                     }
 
                     @Override
                     public void onError(Throwable e) {
-
+                        chatRVAdapter.addChat(new TextChatModel(ChatModel.WHO.COMPUTER, e.getMessage()));
                     }
 
                     @Override
