@@ -14,12 +14,25 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import java.util.List;
+import java.util.Map;
+
+import ekart.com.hackapp.AppInfoProvider;
 import ekart.com.hackapp.R;
 import ekart.com.hackapp.adapters.SectionsPagerAdapter;
-import ekart.com.hackapp.sample.AIButtonSampleActivity;
+import ekart.com.hackapp.fragments.SlotDialogFragment;
+import ekart.com.hackapp.models.SlotDiscount;
+import ekart.com.hackapp.networkHandler.NetworkHandler;
 import ekart.com.hackapp.sample.TTS;
+import ekart.com.hackapp.utils.FragmentUtils;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -58,6 +71,69 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+        makeReady();
+
+    }
+
+    void makeReady() {
+//        io.reactivex.Observable.create(new ObservableOnSubscribe<List<String>>() {
+//            @Override
+//            public void subscribe(ObservableEmitter<List<String>> e) throws Exception {
+//                e.onNext(NetworkHandler.getInstance().getLocalities());
+//            }
+//        }).subscribeOn(Schedulers.computation())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(new Observer<List<String>>() {
+//                    @Override
+//                    public void onSubscribe(Disposable d) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onNext(List<String> localitiesList) {
+//                        AppInfoProvider.INSTANCE.setLocalitiesList(localitiesList);
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//                    }
+//
+//                    @Override
+//                    public void onComplete() {
+//
+//                    }
+//                });
+
+        io.reactivex.Observable.create(new ObservableOnSubscribe<Map<String, List<SlotDiscount>>>() {
+            @Override
+            public void subscribe(ObservableEmitter<Map<String, List<SlotDiscount>>> e) throws Exception {
+                e.onNext(NetworkHandler.getInstance().getSlots());
+            }
+        }).subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Map<String, List<SlotDiscount>>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Map<String, List<SlotDiscount>> discountMap) {
+                        AppInfoProvider.INSTANCE.setDiscountMap(discountMap);
+                        SlotDialogFragment slotDialogFragment = new SlotDialogFragment();
+                        FragmentUtils.showCustomDialog(slotDialogFragment, getSupportFragmentManager());
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        int a =1;
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
 
@@ -77,7 +153,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            startActivity(AIButtonSampleActivity.class);
+            SlotDialogFragment slotDialogFragment = new SlotDialogFragment();
+            FragmentUtils.showCustomDialog(slotDialogFragment, getSupportFragmentManager());
         }
 
         return super.onOptionsItemSelected(item);
