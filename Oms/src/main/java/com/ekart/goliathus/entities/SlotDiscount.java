@@ -9,5 +9,6 @@ import lombok.Data;
 public class SlotDiscount {
     private final Slot slot;
     private final int discount;
+    private final double amount;
 
 }
