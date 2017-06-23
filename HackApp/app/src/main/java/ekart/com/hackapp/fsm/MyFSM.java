@@ -1,5 +1,7 @@
 package ekart.com.hackapp.fsm;
 
+import android.provider.ContactsContract;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -187,13 +189,31 @@ public class MyFSM {
             }
 
             stateEntity.setDataType(DataType.PRODUCT_LIST);
-            stateEntity.setData(new ArrayList<ItemDetail>());
+            stateEntity.setData(purchasedItems);
             stateEntity.setNextQuestion("Your order is complete. Total amount payable is : " + totalPrice);
             currentState = new State();
             currentState.setStateName(StateName.WELCOME);
             currentState.setStateEntity(stateEntity);
             stateList.add(currentState);
             return currentState;
+        } else if ("SHOW CART".equals(fulfilledText) || "SHOW CART".equals(resolvedText)) {
+            StateEntity stateEntity = new StateEntity();
+            stateEntity.setDataType(DataType.PRODUCT_LIST);
+            stateEntity.setData(purchasedItems);
+
+            int totalPrice = 0;
+            for (ItemDetail itr : purchasedItems) {
+                totalPrice += itr.getPrice();
+            }
+            stateEntity.setNextQuestion("Your order is complete. Total amount payable is : " + totalPrice);
+
+            currentState = new State();
+            currentState.setStateName(StateName.WELCOME);
+            currentState.setStateEntity(stateEntity);
+            stateList.add(currentState);
+            return currentState;
+
+
         } else {
             StateEvent event = new StateEvent(EventName.ADD_PRODUCT);
             event.setInputType(inputType);
