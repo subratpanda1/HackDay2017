@@ -7,6 +7,7 @@ import ekart.com.hackapp.models.AddProductResponse;
 import ekart.com.hackapp.models.Category;
 import ekart.com.hackapp.models.ItemDetail;
 import retrofit2.Call;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
@@ -19,7 +20,7 @@ public interface NetworkHandlerInterface {
     @GET("/goliathus/category/list")
     Call<List<Category>> getCategories();
 
-    @GET("/goliathus/category/{category}")
+    @GET("/goliathus/category/{category}/list")
     Call<List<ItemDetail>> getProductsForCategory(@Path("category") String category);
 
     @POST("goliathus/product/{product}/add/{inputType}")

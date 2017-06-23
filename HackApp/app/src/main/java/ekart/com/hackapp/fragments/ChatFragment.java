@@ -110,6 +110,7 @@ public class ChatFragment extends BaseFragment implements AIButton.AIButtonListe
                 e.onNext(MyFSM.getInstance().handleEvent(result.getResult().getFulfillment().getSpeech().toUpperCase(), result.getResult().getResolvedQuery().toUpperCase(), InputType.VOICE));
             }
         }).subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<State>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -122,12 +123,13 @@ public class ChatFragment extends BaseFragment implements AIButton.AIButtonListe
                         SwipeDialogFragment swipeDialogFragment = new SwipeDialogFragment();
                         swipeDialogFragment.setItemDetails(itemDetailList);
                         FragmentUtils.showCustomDialog(swipeDialogFragment, getChildFragmentManager());
+                        TTS.speak(state.getStateEntity().getNextQuestion());
                         adjustRV();
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        String err = "Sorry, didn't get you.";
+                        String err = "Some error occurred. Please try again.";
                         chatRVAdapter.addChat(new TextChatModel(ChatModel.WHO.COMPUTER, "Processed exception: " + result.getResult().getFulfillment().getSpeech()));
                         chatRVAdapter.addChat(new TextChatModel(ChatModel.WHO.COMPUTER, err));
                         TTS.speak(err);
@@ -156,6 +158,7 @@ public class ChatFragment extends BaseFragment implements AIButton.AIButtonListe
                 e.onNext(MyFSM.getInstance().handleEvent(command, "", inputType));
             }
         }).subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<State>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -222,10 +225,7 @@ public class ChatFragment extends BaseFragment implements AIButton.AIButtonListe
                         }
                         if (itemDetail.getItemType() == ItemDetail.ItemType.PRODUCT) {
                             handleCommand("CONFIRM PRODUCT " + itemDetail.getName(), InputType.CLICK);
-                            chatRVAdapter.addChat(new TextChatModel(ChatModel.WHO.COMPUTER, "Item added"));
-                            TTS.speak("Item added");
-                            chatRVAdapter.addChat(new ImageChatModel(ChatModel.WHO.COMPUTER, itemDetail.getImageUrl()));
-                            adjustRV();
+
                         }
                     }
                 }));

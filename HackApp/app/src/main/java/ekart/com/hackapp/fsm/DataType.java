@@ -5,11 +5,8 @@ package ekart.com.hackapp.fsm;
  */
 
 public enum DataType {
-    DUMMY_DATA_TYPE,
-    CATEGORY_LIST, // List<String>
     CATEGORY_NAME, // String
     PRODUCT_NAME, // String
-    ADD_ITEM,
     ADD_PRODUCT, // AddProductResponse
     PRODUCT_LIST // List<ItemDetail>
 

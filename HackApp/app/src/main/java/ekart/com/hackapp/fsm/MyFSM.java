@@ -1,6 +1,7 @@
 package ekart.com.hackapp.fsm;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import ekart.com.hackapp.fsm.actions.ActionMap;
@@ -9,7 +10,6 @@ import ekart.com.hackapp.fsm.actions.ActionResponseType;
 import ekart.com.hackapp.fsm.actions.ActionType;
 import ekart.com.hackapp.fsm.events.EventName;
 import ekart.com.hackapp.fsm.events.StateEvent;
-import ekart.com.hackapp.models.AddProductResponse;
 import ekart.com.hackapp.models.Category;
 import ekart.com.hackapp.models.ItemDetail;
 
@@ -24,6 +24,7 @@ public class MyFSM {
     public List<State> stateList;
     public State currentState;
 
+    public List<ItemDetail> purchasedItems = new ArrayList<>();
 
     public static MyFSM getInstance() {
         if (instance == null) instance = new MyFSM();
@@ -39,7 +40,7 @@ public class MyFSM {
 
     public State handleEvent(String fulfilledText, String resolvedText, InputType inputType) throws Exception {
         // Based on the text and current state, the event is formed
-        if ("SHOW CATEGORIES".equals(fulfilledText)) {
+        if ("SHOW CATEGORIES".equals(fulfilledText) || "SHOW CATEGORIES".equals(resolvedText)) {
             StateEvent event = new StateEvent(EventName.SHOW_CATEGORIES);
             ActionResponse response = ActionMap.getInstance().actionMap.get(ActionType.SHOW_CATEGORIES).execute(event, currentState, stateList);
 
@@ -58,6 +59,7 @@ public class MyFSM {
                 StateEntity stateEntity = new StateEntity();
                 stateEntity.setDataType(DataType.PRODUCT_LIST);
                 stateEntity.setData(itemList);
+                stateEntity.setNextQuestion("Which category do you want to add ?");
 
                 currentState = new State();
                 currentState.setStateName(StateName.CATEGORIES_LISTED);
@@ -97,7 +99,22 @@ public class MyFSM {
                 StateEntity stateEntity = new StateEntity();
                 stateEntity.setDataType(DataType.PRODUCT_LIST);
                 stateEntity.setData(response.actionResponse);
-                stateEntity.setNextQuestion("Are you sure ?");
+
+                List<ItemDetail> items = (List<ItemDetail>)response.actionResponse;
+
+                if (items.size() == 1) {
+                    stateEntity.setNextQuestion("Are you sure you want to buy " + items.get(0).getName() + ": (Yes / No) ?");
+
+                    currentState = new State();
+                    currentState.setStateName(StateName.PRODUCT_CONFIRMATION_ASKED);
+                    currentState.setStateEntity(stateEntity);
+                    stateList.add(currentState);
+                    return currentState;
+                } else if (items.isEmpty()) {
+                    stateEntity.setNextQuestion(("No Items Found"));
+                } else {
+                    stateEntity.setNextQuestion("Please select one");
+                }
 
                 currentState = new State();
                 currentState.setStateName(StateName.PRODUCTS_LISTED);
@@ -105,20 +122,49 @@ public class MyFSM {
                 stateList.add(currentState);
                 return currentState;
             }
+        } else if (fulfilledText.startsWith("CONFIRM PRODUCT ")) {
+            StateEvent event = new StateEvent(EventName.CONFIRM_PRODUCT);
+            event.setInputType(inputType);
+            event.setDataType(DataType.PRODUCT_NAME);
 
-        } else if ("YES".equals(fulfilledText)) {
+            // Find the Product from product list
+            State state = stateList.get(stateList.size() - 1);
+            List<ItemDetail> items = (List<ItemDetail>)state.getStateEntity().getData();
+
+            String productName = fulfilledText.replace("CONFIRM PRODUCT ", "");
+            ItemDetail product = null;
+            for (ItemDetail itr : items) {
+                if (itr.getName().toUpperCase().equals(productName.toUpperCase())) {
+                    product = itr;
+                    break;
+                }
+            }
+
+            StateEntity stateEntity = new StateEntity();
+            stateEntity.setDataType(DataType.PRODUCT_LIST);
+            stateEntity.setData(Collections.singletonList(product));
+            stateEntity.setNextQuestion("Are you sure you want to buy " + product.getName() + ": (Yes / No) ?");
+
+            currentState = new State();
+            currentState.setStateName(StateName.PRODUCT_CONFIRMATION_ASKED);
+            currentState.setStateEntity(stateEntity);
+            stateList.add(currentState);
+            return currentState;
+        } else if ("YES".equals(fulfilledText) || "YES".equals(resolvedText)) {
             StateEvent event = new StateEvent(EventName.CONFIRMATION);
             event.setInputType(inputType);
 
             ActionResponse response = ActionMap.getInstance().actionMap.get(ActionType.CONFIRMATION).execute(event, currentState, stateList);
 
             if (response.getType() == ActionResponseType.ADD_PRODUCT) {
-                AddProductResponse response1 = (AddProductResponse) response.getActionResponse();
+                List<ItemDetail> response1 = (List<ItemDetail>) response.getActionResponse();
 
                 StateEntity stateEntity = new StateEntity();
                 stateEntity.setDataType(DataType.ADD_PRODUCT);
                 stateEntity.setData(response1);
-                stateEntity.setNextQuestion("Successfully added product to order");
+                stateEntity.setNextQuestion("Successfully added " + response1.get(0).getName() + " to order");
+
+                purchasedItems.add(response1.get(0));
 
                 currentState = new State();
                 currentState.setStateName(StateName.FURTHER);
@@ -130,6 +176,23 @@ public class MyFSM {
         } else if ("NO".equals(fulfilledText)) {
 
         } else if (fulfilledText.contains("MORE")) {
+
+        } else if (fulfilledText.contains("CHECKOUT") || resolvedText.contains("CHECKOUT") || fulfilledText.contains("CHECK OUT") || resolvedText.contains("CHECK OUT")) {
+            StateEntity stateEntity = new StateEntity();
+
+            int totalPrice = 0;
+            for (ItemDetail itr : purchasedItems) {
+                totalPrice += itr.getPrice();
+            }
+
+            stateEntity.setDataType(DataType.PRODUCT_LIST);
+            stateEntity.setData(new ArrayList<ItemDetail>());
+            stateEntity.setNextQuestion("Your order is complete. Total amount payable is : " + totalPrice);
+            currentState = new State();
+            currentState.setStateName(StateName.WELCOME);
+            currentState.setStateEntity(stateEntity);
+            stateList.add(currentState);
+            return currentState;
 
         } else {
             StateEvent event = new StateEvent(EventName.ADD_PRODUCT);
@@ -143,7 +206,22 @@ public class MyFSM {
                 StateEntity stateEntity = new StateEntity();
                 stateEntity.setDataType(DataType.PRODUCT_LIST);
                 stateEntity.setData(response.actionResponse);
-                stateEntity.setNextQuestion("Are you sure ?");
+
+                List<ItemDetail> items = (List<ItemDetail>)response.actionResponse;
+
+                if (items.size() == 1) {
+                    stateEntity.setNextQuestion("Are you sure you want to buy " + items.get(0).getName() + ": (Yes / No) ?");
+
+                    currentState = new State();
+                    currentState.setStateName(StateName.PRODUCT_CONFIRMATION_ASKED);
+                    currentState.setStateEntity(stateEntity);
+                    stateList.add(currentState);
+                    return currentState;
+                } else if (items.isEmpty()) {
+                    stateEntity.setNextQuestion(("No Items Found"));
+                } else {
+                    stateEntity.setNextQuestion("Please select one");
+                }
 
                 currentState = new State();
                 currentState.setStateName(StateName.PRODUCTS_LISTED);
