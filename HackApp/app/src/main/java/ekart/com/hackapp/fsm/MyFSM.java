@@ -51,6 +51,7 @@ public class MyFSM {
                     ItemDetail itemDetail = new ItemDetail();
                     itemDetail.setName(cat.getName());
                     itemDetail.setImageUrl(cat.getImageUrl());
+                    itemDetail.setItemType(ItemDetail.ItemType.CATEGORY);
                     itemList.add(itemDetail);
                 }
 
