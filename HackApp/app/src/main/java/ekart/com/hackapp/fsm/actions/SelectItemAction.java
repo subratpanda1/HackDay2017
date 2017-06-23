@@ -23,10 +23,10 @@ public class SelectItemAction implements Action {
 
         if (tmpState.getStateName() == StateName.CATEGORIES_LISTED) {
             // TODO: User can select a number. Need to convert number to the category in the list
-            List<ItemDetail> itemDetails = NetworkHandler.getInstance().getItems(event.getEventData().toString());
+            List<ItemDetail> itemDetails = NetworkHandler.getInstance().getProductsForCategory(event.getEventData().toString(), event.getInputType());
             ActionResponse actionResponse = new ActionResponse();
             actionResponse.setActionResponse(itemDetails);
-            actionResponse.setType(ActionResponseType.ITEM_LIST);
+            actionResponse.setType(ActionResponseType.PRODUCT_LIST);
             return actionResponse;
         } else {
             ActionResponse actionResponse = new ActionResponse();

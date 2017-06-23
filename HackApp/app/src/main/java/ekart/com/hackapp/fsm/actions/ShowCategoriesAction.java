@@ -5,6 +5,7 @@ import java.util.Map;
 
 import ekart.com.hackapp.fsm.State;
 import ekart.com.hackapp.fsm.events.StateEvent;
+import ekart.com.hackapp.models.Category;
 import ekart.com.hackapp.networkHandler.NetworkHandler;
 import lombok.Data;
 
@@ -16,7 +17,7 @@ import lombok.Data;
 public class ShowCategoriesAction implements Action {
     @Override
     public ActionResponse execute(StateEvent event, State currentState, List<State> stateList) {
-        List<String> response = NetworkHandler.getInstance().getCategories();
+        List<Category> response = NetworkHandler.getInstance().getCategories();
         ActionResponse response1 = new ActionResponse();
         response1.actionResponse = response;
         response1.type = ActionResponseType.CATEGORY_LIST;

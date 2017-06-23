@@ -6,5 +6,6 @@ package ekart.com.hackapp.fsm;
 
 public enum InputType {
     TEXT,
-    VOICE
+    VOICE,
+    CLICK
 }

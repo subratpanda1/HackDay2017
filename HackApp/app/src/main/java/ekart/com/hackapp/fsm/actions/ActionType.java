@@ -7,7 +7,7 @@ package ekart.com.hackapp.fsm.actions;
 public enum ActionType {
     DUMMY_ACTION,
     SHOW_CATEGORIES,
-    SHOW_ITEMS,
+    SHOW_PRODUCTS,
     SELECT_ITEM,
     ADD_PRODUCT,
     CONFIRMATION,
