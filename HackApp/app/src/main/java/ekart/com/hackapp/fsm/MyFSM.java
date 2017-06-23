@@ -150,7 +150,7 @@ public class MyFSM {
             currentState.setStateEntity(stateEntity);
             stateList.add(currentState);
             return currentState;
-        } else if ("YES".equals(fulfilledText) || "YES".equals(resolvedText)) {
+        } else if ("YES".equals(fulfilledText) || "YES".equals(resolvedText) || resolvedText.contains("YES YES")) {
             StateEvent event = new StateEvent(EventName.CONFIRMATION);
             event.setInputType(inputType);
 
@@ -172,11 +172,12 @@ public class MyFSM {
                 stateList.add(currentState);
                 return currentState;
             }
-
-        } else if ("NO".equals(fulfilledText)) {
-
-        } else if (fulfilledText.contains("MORE")) {
-
+        } else if ("WHAT IS YOUR NAME".equals(resolvedText)) {
+            currentState.getStateEntity().setNextQuestion("My name is shop together");
+            return currentState;
+        } else if ("NO".equals(fulfilledText) || "NO".equals(resolvedText) || resolvedText.contains("NO NO")) {
+            currentState.getStateEntity().setNextQuestion("Request Cancelled");
+            return currentState;
         } else if (fulfilledText.contains("CHECKOUT") || resolvedText.contains("CHECKOUT") || fulfilledText.contains("CHECK OUT") || resolvedText.contains("CHECK OUT")) {
             StateEntity stateEntity = new StateEntity();
 
@@ -193,7 +194,6 @@ public class MyFSM {
             currentState.setStateEntity(stateEntity);
             stateList.add(currentState);
             return currentState;
-
         } else {
             StateEvent event = new StateEvent(EventName.ADD_PRODUCT);
             event.setInputType(inputType);
