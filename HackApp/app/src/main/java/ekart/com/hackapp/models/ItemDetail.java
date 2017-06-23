@@ -35,4 +35,11 @@ public class ItemDetail {
 
     @SerializedName("brand")
     private String brand;
+
+    public enum ItemType {
+        CATEGORY,
+        PRODUCT
+    }
+
+    private transient ItemType itemType = ItemType.PRODUCT;
 }

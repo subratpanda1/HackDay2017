@@ -10,6 +10,7 @@ import ekart.com.hackapp.fsm.actions.ActionType;
 import ekart.com.hackapp.fsm.events.EventName;
 import ekart.com.hackapp.fsm.events.StateEvent;
 import ekart.com.hackapp.models.AddProductResponse;
+import ekart.com.hackapp.models.Category;
 import ekart.com.hackapp.models.ItemDetail;
 
 /**
@@ -43,12 +44,14 @@ public class MyFSM {
             ActionResponse response = ActionMap.getInstance().actionMap.get(ActionType.SHOW_CATEGORIES).execute(event, currentState, stateList);
 
             if (response.getType() == ActionResponseType.CATEGORY_LIST) {
-                List<String> responseStrList = (List<String>) (response.actionResponse);
+                List<Category> responseStrList = (List<Category>) (response.actionResponse);
 
                 List<ItemDetail> itemList = new ArrayList<>();
-                for (String str : responseStrList) {
+                for (Category cat : responseStrList) {
                     ItemDetail itemDetail = new ItemDetail();
-                    itemDetail.setName(str);
+                    itemDetail.setName(cat.getName());
+                    itemDetail.setImageUrl(cat.getImageUrl());
+                    itemDetail.setItemType(ItemDetail.ItemType.CATEGORY);
                     itemList.add(itemDetail);
                 }
 
@@ -62,12 +65,27 @@ public class MyFSM {
                 stateList.add(currentState);
                 return currentState;
             }
-        } else if (text.contains("SELECT ITEM")) {
-            // Based on previous state, choose the appropriate item
-            StateEvent event = new StateEvent(EventName.SELECT_ITEM);
-            event.setDataType(DataType.ITEM_NAME);
-            event.setEventData(text.replace("SELECT ITEM", ""));
-        } else if (text.contains("ADD ")) {
+        } else if (text.startsWith("SHOW PRODUCTS")) {
+            StateEvent event = new StateEvent(EventName.SHOW_PRODUCTS);
+            event.setInputType(inputType);
+            event.setDataType(DataType.CATEGORY_NAME);
+            event.setEventData(text.replace("SHOW PRODUCTS ", ""));
+
+            ActionResponse response = ActionMap.getInstance().actionMap.get(ActionType.SHOW_PRODUCTS).execute(event, currentState, stateList);
+
+            if (response.getType() == ActionResponseType.PRODUCT_LIST) {
+                StateEntity stateEntity = new StateEntity();
+                stateEntity.setDataType(DataType.PRODUCT_NAME);
+                stateEntity.setData(response.actionResponse);
+                stateEntity.setNextQuestion("Which product do you want to add ?");
+
+                currentState = new State();
+                currentState.setStateName(StateName.PRODUCTS_LISTED);
+                currentState.setStateEntity(stateEntity);
+                stateList.add(currentState);
+                return currentState;
+            }
+        } else if (text.startsWith("ADD ")) {
             StateEvent event = new StateEvent(EventName.ADD_PRODUCT);
             event.setInputType(inputType);
             event.setDataType(DataType.PRODUCT_NAME);
@@ -76,11 +94,10 @@ public class MyFSM {
             ActionResponse response = ActionMap.getInstance().actionMap.get(ActionType.ADD_PRODUCT).execute(event, currentState, stateList);
 
             if (response.getType() == ActionResponseType.ADD_PRODUCT) {
-
                 StateEntity stateEntity = new StateEntity();
                 stateEntity.setDataType(DataType.PRODUCT_LIST);
                 stateEntity.setData(response.actionResponse);
-                stateEntity.setNextQuestion("Are you sure");
+                stateEntity.setNextQuestion("Are you sure ?");
 
                 currentState = new State();
                 currentState.setStateName(StateName.PRODUCTS_LISTED);

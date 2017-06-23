@@ -1,23 +1,25 @@
 package ekart.com.hackapp.fsm.actions;
 
 import java.util.List;
-import java.util.Map;
 
 import ekart.com.hackapp.fsm.State;
 import ekart.com.hackapp.fsm.events.StateEvent;
+import ekart.com.hackapp.models.ItemDetail;
 import ekart.com.hackapp.networkHandler.NetworkHandler;
+import lombok.Data;
 
 /**
  * Created by subrat.panda on 23/06/17.
  */
 
-public class DummyAction implements Action {
+@Data
+public class ShowProductsAction implements Action {
     @Override
     public ActionResponse execute(StateEvent event, State currentState, List<State> stateList) {
-        Map<String, Long> response = NetworkHandler.getInstance().doHealthCheck();
+        List<ItemDetail> response = NetworkHandler.getInstance().getProductsForCategory(event.getEventData().toString(), event.getInputType());
         ActionResponse response1 = new ActionResponse();
         response1.actionResponse = response;
-        response1.type = ActionResponseType.DUMMY_RESPONSE;
+        response1.type = ActionResponseType.PRODUCT_LIST;
         return response1;
     }
 }
