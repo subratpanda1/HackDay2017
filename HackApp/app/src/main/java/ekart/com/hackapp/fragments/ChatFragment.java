@@ -94,7 +94,10 @@ public class ChatFragment extends BaseFragment implements AIButton.AIButtonListe
             @Override
             public void subscribe(ObservableEmitter<State> e) throws Exception {
                 chatRVAdapter.addChat(new TextChatModel(ChatModel.WHO.COMPUTER, result.getResult().getResolvedQuery()));
-//                e.onNext(MyFSM.getInstance().handleEvent(result.getResult().getFulfillment().getSpeech()));
+                if (chatRVAdapter.getItemCount() > 1)
+                {
+                    recyclerViewChat.getLayoutManager().smoothScrollToPosition(recyclerViewChat, null, chatRVAdapter.getItemCount() - 1);
+                }
                 e.onNext(MyFSM.getInstance().handleEvent("SHOW CATEGORIES"));
             }
         }).subscribeOn(Schedulers.computation())
@@ -108,6 +111,10 @@ public class ChatFragment extends BaseFragment implements AIButton.AIButtonListe
                     public void onNext(State state) {
                         System.out.println("Got state: " + state.stateEntity.data.toString());
                         chatRVAdapter.addChat(new TextChatModel(ChatModel.WHO.COMPUTER, state.stateEntity.data.toString()));
+                        if (chatRVAdapter.getItemCount() > 1)
+                        {
+                            recyclerViewChat.getLayoutManager().smoothScrollToPosition(recyclerViewChat, null, chatRVAdapter.getItemCount() - 1);
+                        }
                     }
 
                     @Override
