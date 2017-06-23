@@ -128,7 +128,7 @@ public class ChatFragment extends BaseFragment implements AIButton.AIButtonListe
 
                         if (state.getStateEntity().getNextQuestion() != null && !state.getStateEntity().getNextQuestion().isEmpty()) {
                             TTS.speak(state.getStateEntity().getNextQuestion());
-                        } else {
+                        } else if (!"NA".equals(state.getStateEntity().getNextQuestion())) {
                             TTS.speak("I could not find any results. Please try again.");
                         }
                         adjustRV();
