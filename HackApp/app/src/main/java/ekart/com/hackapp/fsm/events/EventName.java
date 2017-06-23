@@ -7,8 +7,9 @@ package ekart.com.hackapp.fsm.events;
 public enum EventName {
     DUMMY_NAME,
     SHOW_CATEGORIES,
-    SELECCT_CATEGORY,
-    ADD_PRODUCT,
+    SELECT_ITEM,
+    CONFIRM_ITEM,
     SELECT_QUANTITY,
+    CONFIRM_QUANTITY,
     FURTHER
 }

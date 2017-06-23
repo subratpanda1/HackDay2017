@@ -1,7 +1,5 @@
 package ekart.com.hackapp.fsm;
 
-import java.util.Map;
-
 /**
  * Created by subrat.panda on 23/06/17.
  */
@@ -9,4 +7,5 @@ import java.util.Map;
 public class StateEntity {
     public DataType dataType;
     public Object data;
+    public String nextQuestion;
 }

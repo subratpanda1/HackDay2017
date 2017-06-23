@@ -37,12 +37,12 @@ public class MyFSM {
 
     public State handleEvent(StateEvent event) {
         switch (event.eventName) {
-            case DUMMY_NAME:
+            case DUMMY_NAME: {
                 // Validate Current State
 
                 // Transition to new state
                 // Trigger the action corresponding to the event
-                ActionResponse response = ActionMap.getInstance().actionMap.get(ActionType.DUMMY_ACTION).execute(currentState, event);
+                ActionResponse response = ActionMap.getInstance().actionMap.get(ActionType.DUMMY_ACTION).execute(event, currentState, stateList);
 
                 StateEntity stateEntity = new StateEntity();
                 stateEntity.dataType = DataType.DUMMY_DATA_TYPE;
@@ -53,22 +53,43 @@ public class MyFSM {
                 currentState.stateEntity = stateEntity;
                 stateList.add(currentState);
                 break;
+            }
+            case SHOW_CATEGORIES: {
+                ActionResponse response = ActionMap.getInstance().actionMap.get(ActionType.SHOW_CATEGORIES).execute(event, currentState, stateList);
+
+                StateEntity stateEntity = new StateEntity();
+                stateEntity.dataType = DataType.CATEGORY_LIST;
+                stateEntity.data = response;
+
+                currentState = new State();
+                currentState.stateName = StateName.CATEGORIES_LISTED;
+                currentState.stateEntity = stateEntity;
+                stateList.add(currentState);
+                break;
+            }
         }
 
         return currentState;
     }
 
-    public State handleEvent(String text) {
+    public State handleEvent(String text) throws Exception {
         // Based on the text and current state, the event is formed
         if ("SHOW CATEGORIES".equals(text)) {
-
+            return handleEvent(new StateEvent(EventName.SHOW_CATEGORIES));
         } else if (text.contains("SELECT ITEM")) {
             // Based on previous state, choose the appropriate item
+            StateEvent event = new StateEvent(EventName.SELECT_ITEM);
+            event.dataType = DataType.ITEM_NAME;
+            event.eventData = text.replace("SELECT ITEM", "");
         } else if (text.contains("ADD ITEM")) {
 
-        } else if (text.contains("YES")) {
+        } else if ("YES".equals(text)) {
 
-        } else if (text.contains("NO")) {
+        } else if ("NO".equals(text)) {
+
+        } else if (text.contains("MORE")) {
+
+        } else {
 
         }
 

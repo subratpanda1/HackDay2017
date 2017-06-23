@@ -5,5 +5,10 @@ package ekart.com.hackapp.fsm.actions;
  */
 
 public enum ActionResponseType {
-    DUMMY_RESPONSE
+    DUMMY_RESPONSE,
+    CATEGORY_LIST,
+    ITEM_LIST,
+    ADD_PRODUCT,
+    INVALID_INPUT,
+    COULD_NOT_UNDERSTAND
 }

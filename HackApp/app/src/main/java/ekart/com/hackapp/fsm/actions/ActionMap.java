@@ -20,5 +20,7 @@ public class ActionMap {
     ActionMap() {
         actionMap = new HashMap<>();
         actionMap.put(ActionType.DUMMY_ACTION, new DummyAction());
+        actionMap.put(ActionType.SHOW_CATEGORIES, new ShowCategoriesAction());
+        // actionMap.put(ActionType.SHOW_ITEMS, new ShowItemsAction());
     }
 }
