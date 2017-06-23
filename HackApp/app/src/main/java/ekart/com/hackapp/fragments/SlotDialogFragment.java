@@ -60,7 +60,7 @@ public class SlotDialogFragment extends BaseDialogFragment {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 ArrayAdapter<SlotDiscount> sadapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item,
-                        AppInfoProvider.INSTANCE.getDiscountMap().get(localitiesList.get(i)));
+                        AppInfoProvider.INSTANCE.getDiscountMap().get(localitiesList.get(i)==null?new SlotDiscount():localitiesList.get(i)));
                 slotSpinner.setAdapter(sadapter);
                 selectedKey = localitiesList.get(i);
             }
