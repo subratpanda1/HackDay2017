@@ -47,6 +47,11 @@ public class SlotDialogFragment extends BaseDialogFragment {
         textView = (TextView) getView().findViewById(R.id.discountMessage);
         buttonCancel = (Button) getView().findViewById(R.id.cancelBtn);
         buttonSelect = (Button) getView().findViewById(R.id.SelectBtn);
+        if(AppInfoProvider.INSTANCE.getDiscountMap() == null){
+            Toast.makeText(getActivity(), "Sorry, some issue displaying the info", Toast.LENGTH_SHORT).show();
+            this.dismiss();
+            return;
+        }
 
         final List<String> localitiesList = new ArrayList<String>(AppInfoProvider.INSTANCE.getDiscountMap().keySet());
         ArrayAdapter<String> ladapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, localitiesList);
