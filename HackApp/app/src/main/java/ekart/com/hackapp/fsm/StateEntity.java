@@ -1,12 +1,14 @@
 package ekart.com.hackapp.fsm;
 
-import java.util.Map;
+import lombok.Data;
 
 /**
  * Created by subrat.panda on 23/06/17.
  */
 
+@Data
 public class StateEntity {
-    public DataType dataType;
-    public Object data;
+    private DataType dataType;
+    private Object data;
+    private String nextQuestion;
 }

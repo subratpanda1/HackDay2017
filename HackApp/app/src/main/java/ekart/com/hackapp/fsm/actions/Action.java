@@ -1,5 +1,7 @@
 package ekart.com.hackapp.fsm.actions;
 
+import java.util.List;
+
 import ekart.com.hackapp.fsm.State;
 import ekart.com.hackapp.fsm.events.StateEvent;
 
@@ -8,5 +10,5 @@ import ekart.com.hackapp.fsm.events.StateEvent;
  */
 
 public interface Action {
-    ActionResponse execute(State currentState, StateEvent event);
+    ActionResponse execute(StateEvent event, State currentState, List<State> stateList);
 }
