@@ -19,6 +19,7 @@ import ekart.com.hackapp.fsm.State;
 import ekart.com.hackapp.models.ChatModel;
 import ekart.com.hackapp.models.TextChatModel;
 import ekart.com.hackapp.sample.Config;
+import ekart.com.hackapp.utils.FragmentUtils;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
@@ -107,6 +108,7 @@ public class ChatFragment extends BaseFragment implements AIButton.AIButtonListe
                     public void onNext(State state) {
                         System.out.println("Got state: " + state.stateEntity.data.toString());
                         chatRVAdapter.addChat(new TextChatModel(ChatModel.WHO.COMPUTER, state.stateEntity.data.toString()));
+                        FragmentUtils.showCustomDialog(new SwipeDialogFragment(), getChildFragmentManager());
                     }
 
                     @Override
