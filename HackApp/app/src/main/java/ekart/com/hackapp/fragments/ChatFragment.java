@@ -127,6 +127,7 @@ public class ChatFragment extends BaseFragment implements AIButton.AIButtonListe
                     @Override
                     public void onError(Throwable e) {
                         String err = "Sorry, didn't get you.";
+                        chatRVAdapter.addChat(new TextChatModel(ChatModel.WHO.COMPUTER, "Processed exception: " + result.getResult().getFulfillment().getSpeech()));
                         chatRVAdapter.addChat(new TextChatModel(ChatModel.WHO.COMPUTER, err));
                         TTS.speak(err);
                         adjustRV();
