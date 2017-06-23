@@ -1,9 +1,7 @@
 package ekart.com.hackapp.fsm;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import ekart.com.hackapp.fsm.actions.ActionMap;
 import ekart.com.hackapp.fsm.actions.ActionResponse;
@@ -51,6 +49,7 @@ public class MyFSM {
                 for (String str : responseStrList) {
                     ItemDetail itemDetail = new ItemDetail();
                     itemDetail.setName(str);
+                    itemList.add(itemDetail);
                 }
 
                 StateEntity stateEntity = new StateEntity();
@@ -80,7 +79,7 @@ public class MyFSM {
 
                 StateEntity stateEntity = new StateEntity();
                 stateEntity.setDataType(DataType.PRODUCT_LIST);
-                stateEntity.setData(response);
+                stateEntity.setData(response.actionResponse);
                 stateEntity.setNextQuestion("Are you sure");
 
                 currentState = new State();

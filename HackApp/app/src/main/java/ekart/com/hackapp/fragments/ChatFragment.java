@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.List;
+
 import ai.api.android.AIConfiguration;
 import ai.api.model.AIError;
 import ai.api.model.AIResponse;
@@ -18,6 +20,7 @@ import ekart.com.hackapp.fsm.InputType;
 import ekart.com.hackapp.fsm.MyFSM;
 import ekart.com.hackapp.fsm.State;
 import ekart.com.hackapp.models.ChatModel;
+import ekart.com.hackapp.models.ItemDetail;
 import ekart.com.hackapp.models.TextChatModel;
 import ekart.com.hackapp.sample.Config;
 import ekart.com.hackapp.utils.FragmentUtils;
@@ -89,11 +92,11 @@ public class ChatFragment extends BaseFragment implements AIButton.AIButtonListe
             @Override
             public void subscribe(ObservableEmitter<State> e) throws Exception {
                 chatRVAdapter.addChat(new TextChatModel(ChatModel.WHO.COMPUTER, result.getResult().getResolvedQuery()));
-                if (chatRVAdapter.getItemCount() > 1)
-                {
+                if (chatRVAdapter.getItemCount() > 1) {
                     recyclerViewChat.getLayoutManager().smoothScrollToPosition(recyclerViewChat, null, chatRVAdapter.getItemCount() - 1);
                 }
-                e.onNext(MyFSM.getInstance().handleEvent("ADD Kelloggs", InputType.VOICE));
+//                e.onNext(MyFSM.getInstance().handleEvent(result.getResult().getFulfillment().getSpeech().toUpperCase(), InputType.VOICE));
+                e.onNext(MyFSM.getInstance().handleEvent(result.getResult().getResolvedQuery().toUpperCase(), InputType.VOICE));
             }
         }).subscribeOn(Schedulers.computation())
                 .subscribe(new Observer<State>() {
@@ -104,11 +107,11 @@ public class ChatFragment extends BaseFragment implements AIButton.AIButtonListe
 
                     @Override
                     public void onNext(State state) {
-                        System.out.println("Got state: " + state.getStateEntity().getData().toString());
-                        chatRVAdapter.addChat(new TextChatModel(ChatModel.WHO.COMPUTER, state.getStateEntity().getData().toString()));
-                        FragmentUtils.showCustomDialog(new SwipeDialogFragment(), getChildFragmentManager());
-                        if (chatRVAdapter.getItemCount() > 1)
-                        {
+                        List<ItemDetail> itemDetailList = (List<ItemDetail>) state.getStateEntity().getData();
+                        SwipeDialogFragment swipeDialogFragment = new SwipeDialogFragment();
+                        swipeDialogFragment.setItemDetails(itemDetailList);
+                        FragmentUtils.showCustomDialog(swipeDialogFragment, getChildFragmentManager());
+                        if (chatRVAdapter.getItemCount() > 1) {
                             recyclerViewChat.getLayoutManager().smoothScrollToPosition(recyclerViewChat, null, chatRVAdapter.getItemCount() - 1);
                         }
                     }
