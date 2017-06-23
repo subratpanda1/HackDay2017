@@ -10,6 +10,10 @@ import javax.persistence.*;
 @Entity
 @Table
 @Data
+@NamedQueries({
+        @NamedQuery(name = "com.ekart.goliathus.entities.Customer.findByLocality",
+                query = "select c from Customer c where c.address.locality = :locality")
+})
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

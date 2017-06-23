@@ -16,6 +16,10 @@ import java.util.List;
 @Entity
 @Table
 @Data
+@NamedQueries({
+        @NamedQuery(name = "com.ekart.goliathus.entities.PlacedOrder.findByLocality",
+                query = "select o from PlacedOrder o where o.locality = :locality and o.status = 'created'")
+})
 public class PlacedOrder implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,8 +29,16 @@ public class PlacedOrder implements Serializable {
     @ManyToOne(targetEntity = Customer.class)
     private Customer customer;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    private List<OrderProductItem> orderProductItems = new ArrayList<>();
+    @ManyToOne(targetEntity = Slot.class)
+    private Slot slot;
+
+    private Double orderValue;
+
+    private Double billAmount;
+
+    private String status;
+
+    private String locality;
 
     @Generated(GenerationTime.INSERT)
     @Temporal(TemporalType.TIMESTAMP)

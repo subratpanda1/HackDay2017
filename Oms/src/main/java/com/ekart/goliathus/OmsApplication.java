@@ -17,7 +17,9 @@ public class OmsApplication extends Application<OmsConfiguration> {
             Category.class,
             OrderProductItem.class,
             ProductVariant.class,
-            Tag.class
+            Tag.class,
+            Slot.class,
+            Discount.class
     ) {
         @Override
         public PooledDataSourceFactory getDataSourceFactory(OmsConfiguration omsConfiguration) {
