@@ -20,6 +20,7 @@ import ekart.com.hackapp.adapters.ChatRVAdapter;
 import ekart.com.hackapp.fsm.InputType;
 import ekart.com.hackapp.fsm.MyFSM;
 import ekart.com.hackapp.fsm.State;
+import ekart.com.hackapp.fsm.StateEntity;
 import ekart.com.hackapp.models.ChatModel;
 import ekart.com.hackapp.models.ImageChatModel;
 import ekart.com.hackapp.models.ItemDetail;
@@ -145,7 +146,8 @@ public class ChatFragment extends BaseFragment implements AIButton.AIButtonListe
         }
     }
 
-    String nextQuestion;
+    StateEntity stateEntity;
+
     private void handleCommand(final String command, final InputType inputType) {
         io.reactivex.Observable.create(new ObservableOnSubscribe<State>() {
             @Override
@@ -161,13 +163,16 @@ public class ChatFragment extends BaseFragment implements AIButton.AIButtonListe
 
                     @Override
                     public void onNext(State state) {
-                        nextQuestion = state.getStateEntity().getNextQuestion();
+                        stateEntity = state.getStateEntity();
                         List<ItemDetail> itemDetailList = (List<ItemDetail>) state.getStateEntity().getData();
-                        SwipeDialogFragment swipeDialogFragment = new SwipeDialogFragment();
-                        swipeDialogFragment.setItemDetails(itemDetailList);
-                        FragmentUtils.showCustomDialog(swipeDialogFragment, getChildFragmentManager());
-                        if (chatRVAdapter.getItemCount() > 1) {
-                            recyclerViewChat.getLayoutManager().smoothScrollToPosition(recyclerViewChat, null, chatRVAdapter.getItemCount() - 1);
+                        String txt = state.getStateEntity().getNextQuestion();
+                        chatRVAdapter.addChat(new TextChatModel(ChatModel.WHO.COMPUTER, txt));
+                        TTS.speak(txt);
+                        adjustRV();
+                        if (itemDetailList.size() > 1) {
+                            SwipeDialogFragment swipeDialogFragment = new SwipeDialogFragment();
+                            swipeDialogFragment.setItemDetails(itemDetailList);
+                            FragmentUtils.showCustomDialog(swipeDialogFragment, getChildFragmentManager());
                         }
                     }
 
@@ -203,7 +208,7 @@ public class ChatFragment extends BaseFragment implements AIButton.AIButtonListe
         unbind();
     }
 
-    void bind(){
+    void bind() {
         unbind();
         subscription = new CompositeDisposable();
         subscription.add(ChatViewModel.INSTANCE.getItemDetailPublishSubject()
@@ -211,11 +216,11 @@ public class ChatFragment extends BaseFragment implements AIButton.AIButtonListe
                 .subscribe(new Consumer<ItemDetail>() {
                     @Override
                     public void accept(@NonNull ItemDetail itemDetail) throws Exception {
-                        if(itemDetail.getItemType()== ItemDetail.ItemType.CATEGORY) {
+                        if (itemDetail.getItemType() == ItemDetail.ItemType.CATEGORY) {
                             handleCommand("SHOW PRODUCTS " + itemDetail.getName(), InputType.CLICK);
                         }
-                        if(itemDetail.getItemType()== ItemDetail.ItemType.PRODUCT) {
-                            handleCommand("ADD PRODUCT " + itemDetail.getName(), InputType.CLICK);
+                        if (itemDetail.getItemType() == ItemDetail.ItemType.PRODUCT) {
+                            handleCommand("CONFIRM PRODUCT " + itemDetail.getName(), InputType.CLICK);
                             chatRVAdapter.addChat(new TextChatModel(ChatModel.WHO.COMPUTER, "Item added"));
                             TTS.speak("Item added");
                             chatRVAdapter.addChat(new ImageChatModel(ChatModel.WHO.COMPUTER, itemDetail.getImageUrl()));
@@ -225,8 +230,8 @@ public class ChatFragment extends BaseFragment implements AIButton.AIButtonListe
                 }));
     }
 
-    void unbind(){
-        if(subscription != null) {
+    void unbind() {
+        if (subscription != null) {
             subscription.dispose();
         }
     }
